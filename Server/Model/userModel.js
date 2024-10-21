@@ -6,7 +6,7 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
 
-
+ 
 
 mongoose.connect(process.env.CONN_STRING)
   .then(() => {
@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema({
     passwordResetToken: String,
     passwordResetTokenExpires: Date,
 },{
-    collection: 'TeknoFestUsers' 
+    collection: 'User' 
   })
 
 
