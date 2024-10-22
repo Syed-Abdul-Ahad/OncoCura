@@ -12,8 +12,16 @@ const ProductSchema = new mongoose.Schema({
         unique:true,
         trim:true
     },
-
-    description: {
+    company:{
+      type:String,
+      required:[true,"name is required field"],
+      trim:true
+    },
+    type:{
+      type: String,
+      default:"General"
+    },
+    description:{
       type: String,
       required:[true,"description is required model"],
       trim:true
@@ -33,7 +41,10 @@ const ProductSchema = new mongoose.Schema({
       type: String,
       required:[true,"image is required field"]
     },
-});
+},{
+  collection: 'Product' 
+}
+);
 
 
 

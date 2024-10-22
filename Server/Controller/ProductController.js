@@ -62,7 +62,7 @@ exports.getAllProducts= asyncErrorHandler( async (request,response)=>{
 
         response.status(200).json({
             status:"success",
-            length: movies.length,
+            length: products.length,
             data:{
                 products
             }
