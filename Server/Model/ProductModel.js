@@ -31,14 +31,8 @@ const ProductSchema = new mongoose.Schema({
         type:Number,
         required:[true,"price is required field"]
     },
-
-    ratings:{
-        type:Number,
-        default:1.0
-    },
-
     image:{
-      type: String,
+      type:[String],
       required:[true,"image is required field"]
     },
 },{
