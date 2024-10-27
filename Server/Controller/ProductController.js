@@ -1,6 +1,4 @@
 const Product = require('./../Model/ProductModel')
-// const ApiFeatures = require('./../utils/ApiFeatures')
-
 const asyncErrorHandler = require('./../utils/asyncErrorHandler')
 
 
@@ -75,8 +73,6 @@ exports.getAllProducts= asyncErrorHandler( async (request,response)=>{
 
 
 exports.addProduct = asyncErrorHandler( async (request,response)=>{
-    // const testMovie = new Movie({})
-    // testMovie.save()
 
         const product = await Product.create(request.body)
 
@@ -120,8 +116,7 @@ exports.deleteProduct= asyncErrorHandler (async (request,response)=>{
 
 
 exports.getProduct= asyncErrorHandler( async(request,response)=>{
-
-    // const movies = await Movie.find({_id:req.params.id})
+    
         const product = await Product.findById(request.params.id)
         response.status(200).json({
             status:"success",

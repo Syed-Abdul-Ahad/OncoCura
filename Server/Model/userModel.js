@@ -90,15 +90,27 @@ userSchema.methods.isPasswordChanged = async function(jwtTimeStamp){
 }
 
 
-userSchema.methods.createResetPasswordToken = function(){
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    this.passwordResetToken =  crypto.createHash('sha256').update(resetToken).digest('hex')
-    this.passwordResetTokenExpires = Date.now() + (10*60+1000);
+// userSchema.methods.createResetPasswordToken = function(){
+//     const resetToken = crypto.randomBytes(32).toString('hex');
+//     this.passwordResetToken =  crypto.createHash('sha256').update(resetToken).digest('hex')
+//     this.passwordResetTokenExpires = Date.now() + (30*60+1000);
 
-    console.log(resetToken, this.passwordResetToken)
+//     return resetToken;
+// }
+
+
+userSchema.methods.createResetPasswordToken = function() {
+    // Generate a random reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    // Hash the token and set it on the user schema
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    // Set token expiration to 10 minutes from now
+    this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000; // 10 minutes in milliseconds
 
     return resetToken;
-}
+};
 
 
 
