@@ -3,6 +3,8 @@ const User = require('./../Model/userModel')
 const asyncErrorHandler = require('./../utils/asyncErrorHandler')
 const jwt = require('jsonwebtoken')
 const util = require('util')
+const sendEmail = require('./../utils/email')
+const crypto = require('crypto')
 const env = require('dotenv')
 env.config({path:'./config.env'})
 
@@ -67,7 +69,7 @@ exports.login = asyncErrorHandler(async (req,res,next)=>{
 
 
 
-// protecting routes  (making it a middleware which is used in movie routes earlier before moving to movieController middleware)
+// protecting routes  (making it a middleware which is used in differnet routes earlier before moving to other middleware)
 
 exports.protect = asyncErrorHandler(async (req,res,next)=>{
 
@@ -136,6 +138,95 @@ exports.restrict = (role)=>{
         next()
     }
 }
+
+
+
+
+
+
+// forgot password middleware
+
+exports.forgotPassword = asyncErrorHandler (async(req,res,next)=>{
+
+    //1. get user according to email
+    const user = await User.findOne({email: req.body.email})
+    
+    
+    if(!user){
+        const error = new customError("We couldn't find the user with given email",404)
+        next(error)
+    }
+
+
+    //2. GENERATE A RANDOM RESET TOKEN
+    const resetToken = user.createResetPasswordToken();
+    await user.save({validateBeforeSave: false});
+    
+
+
+    //3. SEND THE TOKEN BACK TO THE USER EMAIL
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`
+    const message = `We have recieved a password reset request, please use the below link to reset your password\n\n ${resetUrl} \n\n This reset password link is valid only for 10 minutes`
+    try{
+        await sendEmail({
+            email: user.email,
+            subject: 'Password change request',
+            message: message
+        })
+
+        res.status(200).json({
+            status:"success",
+            message: 'password reset link send to the user email'
+        })
+    }
+    catch(err){
+        user.passwordResetToken = undefined
+        user.passwordResetTokenExpires = undefined
+        user.save({validateBeforeSave: false})
+        return next(new customError('There was an error sending password reset email. please try again', 500))
+    }
+
+})
+
+
+
+
+exports.resetPassword = asyncErrorHandler(async (req,res,next)=>{
+
+    const token = crypto.createHash('sha256').update(req.params.token).digest('hex')
+
+
+    const user = await User.findOne({passwordResetToken: token, passwordResetTokenExpires: {$gt: Date.now()}}) 
+
+
+    if(!user){
+        const err = new customError('Token is invalid or it has expired',400)
+        next(err)
+    }
+
+    console.log(user)
+
+    // reseting user password
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+    user.passwordChangedAt = Date.now()
+
+    user.save();
+
+
+
+    // loging user again
+
+    const loginToken = signToken(user._id)
+
+    res.status(200).json({
+        status:"success",
+        token : loginToken
+    })
+
+})
 
 
 
