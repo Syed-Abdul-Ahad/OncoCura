@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const uploads = require('./utils/multerConfig')
 const authRouter = require('./Routes/authRouter')
 const productRouter = require('./Routes/ProductRouter')
 const cartRouter = require('./Routes/cartRouter')
@@ -15,6 +16,7 @@ app.use(express.json())
 
 
 app.use("/api/v1/users",authRouter)
+app.use('/uploads', express.static('uploads'))
 app.use('/api/v1/products',productRouter)
 app.use('/api/v1/cart',cartRouter)
 app.use('/api/v1/record',recordRouter)
