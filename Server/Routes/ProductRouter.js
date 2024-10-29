@@ -27,7 +27,7 @@ router.route('/')
     .post(
         authController.protect,
         authController.restrict('admin'),
-        upload.array('image', 5),
+        upload.array('image', 4),
         ProductController.addProduct
     );
 
@@ -36,7 +36,7 @@ router.route('/:id')
     .patch(
         authController.protect,
         authController.restrict('admin'),
-        upload.array('image', 5),
+        upload.array('image', 4),
         ProductController.updateProduct
     )
     .delete(authController.protect, authController.restrict('admin'), ProductController.deleteProduct);

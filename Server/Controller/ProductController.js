@@ -135,6 +135,7 @@ exports.addProduct = asyncErrorHandler(async (req, res) => {
     });
 });
 
+
 // Get all products
 exports.getAllProducts = asyncErrorHandler(async (req, res) => {
 
@@ -201,6 +202,7 @@ exports.getProduct = asyncErrorHandler(async (req, res) => {
     });
 });
 
+
 // Update product with new images
 exports.updateProduct = asyncErrorHandler(async (req, res) => {
     const imagePaths = req.files ? req.files.map(file => file.path) : undefined;
@@ -212,6 +214,7 @@ exports.updateProduct = asyncErrorHandler(async (req, res) => {
         data: { product }
     });
 });
+
 
 // Delete product
 exports.deleteProduct = asyncErrorHandler(async (req, res) => {
