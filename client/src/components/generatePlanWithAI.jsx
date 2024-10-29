@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import UploadReport from "./uploadFIle";
 import { KanbanBoard } from './kanban-board'; // Import your KanbanBoard component
 import { Spinner } from './Spinner'; // Import your spinner component
-
 export const GeneratePlan = () => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [analysisResult, setAnalysisResult] = useState(''); // State to hold analysis result

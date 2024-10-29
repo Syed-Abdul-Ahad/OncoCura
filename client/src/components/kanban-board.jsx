@@ -44,7 +44,7 @@ useEffect(() => {
   const fetchKanbanData = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/generate-kanban', {
+      const response = await fetch('http://localhost:3000/api/generate-kanban', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
