@@ -22,24 +22,42 @@ const router = express.Router()
 
 
 
+// router.route('/')
+//     .get(authController.protect, ProductController.getAllProducts)
+//     .post(
+//         authController.protect,
+//         authController.restrict('admin'),
+//         upload.array('image', 5),
+//         ProductController.addProduct
+//     );
+
+// router.route('/:id')
+//     .get(authController.protect, ProductController.getProduct)
+//     .patch(
+//         authController.protect,
+//         authController.restrict('admin'),
+//         upload.array('image', 5),
+//         ProductController.updateProduct
+//     )
+//     .delete(authController.protect, authController.restrict('admin'), ProductController.deleteProduct);
+
+
 router.route('/')
-    .get(authController.protect, ProductController.getAllProducts)
+    .get( ProductController.getAllProducts)
     .post(
-        authController.protect,
-        authController.restrict('admin'),
-        upload.array('image', 5),
+        upload.array('images', 4),
         ProductController.addProduct
     );
 
 router.route('/:id')
-    .get(authController.protect, ProductController.getProduct)
+    .get(ProductController.getProduct)
     .patch(
-        authController.protect,
-        authController.restrict('admin'),
-        upload.array('image', 5),
+        upload.array('images', 4),
         ProductController.updateProduct
     )
-    .delete(authController.protect, authController.restrict('admin'), ProductController.deleteProduct);
+    .delete(ProductController.deleteProduct);
+
+
 
 module.exports = router;
 
