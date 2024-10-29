@@ -125,15 +125,16 @@ const asyncErrorHandler = require('./../utils/asyncErrorHandler')
 
 // Add product with image upload
 exports.addProduct = asyncErrorHandler(async (req, res) => {
-    const imagePaths = req.files.map(file => file.path);
-    const productData = { ...req.body, image: imagePaths };
-    const product = await Product.create(productData);
-
-    res.status(201).json({
-        status: "success",
-        data: { product }
+        const imagePaths = req.files.map(file => file.path);
+        const productData = { ...req.body, images: imagePaths };
+        const product = await Product.create(productData);
+    
+        res.status(201).json({
+            status: "success",
+            data: { product }
+        });
     });
-});
+
 
 
 // Get all products
@@ -142,7 +143,7 @@ exports.getAllProducts = asyncErrorHandler(async (req, res) => {
             // QueryString (filter) logic
         const excludeFields = ['sort','page','limit','fields']
 
-        const queryObj = {...request.query}
+        const queryObj = {...req.query}
 
         excludeFields.forEach((el)=>{
             delete queryObj[el]
@@ -154,8 +155,8 @@ exports.getAllProducts = asyncErrorHandler(async (req, res) => {
 
 
         // SORTING LOGIC
-        if(request.query.sort){
-            const sortBy = request.query.sort.split(',').join(' ')
+        if(req.query.sort){
+            const sortBy = req.query.sort.split(',').join(' ')
             query = query.sort(sortBy)
         }
         //SORTING LOGIC END
@@ -164,19 +165,19 @@ exports.getAllProducts = asyncErrorHandler(async (req, res) => {
 
         // PAGINATION LOGIC
 
-        const page = request.query.page*1 || 1;
-        const limit = request.query.limit*1 || 10;
-        //page 1, 1-10; page2, 11-20
+        // const page = req.query.page*1 || 1;
+        // const limit = req.query.limit*1 || 10;
+        // //page 1, 1-10; page2, 11-20
 
-        const skip = (page-1)*limit
-        query = query.skip(skip).limit(limit)
+        // const skip = (page-1)*limit
+        // query = query.skip(skip).limit(limit)
 
-        if(request.query.page){
-            const ProductCount = await Product.countDocuments();
-            if(skip>= ProductCount){
-                throw new Error("This page is not found")
-            }
-        }
+        // if(req.query.page){
+        //     const ProductCount = await Product.countDocuments();
+        //     if(skip>= ProductCount){
+        //         throw new Error("This page is not found")
+        //     }
+        // }
         // end of pagination
 
 
@@ -184,7 +185,7 @@ exports.getAllProducts = asyncErrorHandler(async (req, res) => {
 
         const products = await query;
 
-        response.status(200).json({
+        res.status(200).json({
             status:"success",
             length: products.length,
             data:{
