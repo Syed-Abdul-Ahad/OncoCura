@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ShopContext from '../context/ShopContext'
-import search_img from '../assets/pngwing.com (1).png'
-import cross_img from '../assets/pngwing.com (2).png'
+import { assets } from '../assets/assets'
 import { useLocation } from 'react-router-dom'
 
 const SearchBar = () => {
@@ -31,9 +30,9 @@ const SearchBar = () => {
         <div className='border-t border-b bg-gray-50 text-center'>
             <div className='inline-flex items-center justify-center border border-gray-400 px-5 py-2 my-5 mx-3 rounded-full w-3/4 sm:w-1/2'>
                 <input value={search} onChange={(e) => setSearch(e.target.value)} className='flex-1 outline-none bg-inherit text-sm' type='text' placeholder='Search' />
-                <img src={search_img} alt="search icon" className="w-5 cursor-pointer" />
+                <img src={assets.search_icon} alt="search icon" className="w-5 cursor-pointer" />
             </div>
-            <img onClick={() => setShowSearch(false)} src={cross_img} alt="cross icon" className='inline w-5 cursor-pointer' />
+            <img onClick={() => setShowSearch(false)} src={assets.cross_icon} alt="cross icon" className='inline w-5 cursor-pointer' />
         </div>
     ) : null
 }

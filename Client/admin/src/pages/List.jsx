@@ -32,7 +32,7 @@ const List = ({ token }) => {
 
 
       if (response.data.status === "success") {
-        setList(response.data.data.products);
+        setList(response.data.data.products.reverse());
         console.log("Current List:", list);
 
       } else {
@@ -115,7 +115,7 @@ const List = ({ token }) => {
 
   return (
     <>
-      <p className='mb-2'>All Products List</p>
+      <p className='mb-4 font-medium text-black'>All Products List</p>
       <div className='flex flex-col gap-2'>
         {/* list table title */}
         <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm'>
