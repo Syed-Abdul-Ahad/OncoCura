@@ -1,5 +1,5 @@
-import React from "react";
-import { Button } from "../ui/button";
+import { useState } from "react";
+import { Button } from "../../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const formSchema = z
   .object({
@@ -37,6 +38,7 @@ const formSchema = z
 
 const SignUpForm = () => {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -48,8 +50,38 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = (values) => {
-    console.log(values);
+  const onSubmit = async (values) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/users/signup",
+        {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          confirmPassword: values.confirmPassword,
+        }
+      );
+
+      if (!response.status === 201) {
+        throw new Error("Failed to sign up");
+      }
+      navigate("/login");
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        const message = error.response.data?.message;
+        if (message === "User already exists with this email") {
+          setErrorMessage("A user with this email already exists.");
+        } else {
+          setErrorMessage("Failed to sign up. Please try again.");
+        }
+      } else {
+        setErrorMessage("An unexpected error occurred. Please try again.");
+      }
+      console.error(
+        "Error during signup:",
+        error.response?.data?.message || error.message
+      );
+    }
   };
 
   return (
@@ -62,7 +94,7 @@ const SignUpForm = () => {
           Already have an account?{" "}
           <span
             className="text-blue-700 underline cursor-pointer"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/")}
           >
             Login
           </span>

@@ -1,6 +1,6 @@
 import React from "react";
 import SideComponent from "./subcomponent/SideComponent";
-import SignUp from "@/components/shared/SignUp";
+import SignUp from "@/components/shared/signup/SignUp";
 
 const signupPage = () => {
   return (

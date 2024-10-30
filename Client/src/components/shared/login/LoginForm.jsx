@@ -1,5 +1,5 @@
-import React from "react";
-import { Button } from "../ui/button";
+import { useState } from "react";
+import { Button } from "../../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -37,8 +38,26 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values) => {
-    console.log(values);
+  const onSubmit = async (values) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/users/login",
+        {
+          email: values.email,
+          password: values.password,
+        }
+      );
+
+      if (response.status === 200) {
+        setTimeout(() => {
+          navigate(`/user-profile/${response.data.user._id}`);
+        }, 500);
+      } else {
+        throw new Error("Failed to login");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (

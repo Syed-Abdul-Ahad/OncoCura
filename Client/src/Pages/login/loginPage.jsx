@@ -1,5 +1,5 @@
 import React from "react";
-import Login from "../../components/shared/Login";
+import Login from "../../components/shared/login/Login";
 import SideComponent from "./subcomponent/SideComponent";
 
 const LoginPage = () => {
