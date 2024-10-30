@@ -44,6 +44,7 @@ const List = ({ token }) => {
     }
   };
 
+
   const removeProduct = async (id) => {
     try {
       const response = await axios.delete(`${backendUrl}/api/v1/products/${id}`, {
@@ -112,7 +113,7 @@ const List = ({ token }) => {
     
   }, [])
 
-
+  console.log(list)
   return (
     <>
       <p className='mb-2'>All Products List</p>
@@ -142,7 +143,7 @@ const List = ({ token }) => {
         } */}
         {list.map((item) => (
           <div className='grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center gap-2 px-2 py-1 border text-sm' key={item._id}>
-            <img className='w-12' src={item.image[0]} alt={item.name} />
+            <img className='w-12' src={item.images[0]} alt={item.name} />
             <p>{item.name}</p>
             <p>{item.company}</p>
             <p>{item.type}</p>
@@ -156,4 +157,4 @@ const List = ({ token }) => {
   )
 }
 
-export default List
+export default List;

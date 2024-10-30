@@ -126,6 +126,7 @@ const asyncErrorHandler = require('./../utils/asyncErrorHandler')
 // Add product with image upload
 exports.addProduct = asyncErrorHandler(async (req, res) => {
         const imagePaths = req.files.map(file => file.path);
+        console.log(imagePaths)
         const productData = { ...req.body, images: imagePaths };
         const product = await Product.create(productData);
     
@@ -138,61 +139,116 @@ exports.addProduct = asyncErrorHandler(async (req, res) => {
 
 
 // Get all products
+// exports.getAllProducts = asyncErrorHandler(async (req, res) => {
+
+//             // QueryString (filter) logic
+//         const excludeFields = ['sort','page','limit','fields']
+
+//         const queryObj = {...req.query}
+
+//         excludeFields.forEach((el)=>{
+//             delete queryObj[el]
+//         })
+
+//         let query =  Product.find(queryObj)
+//         // logic end
+
+
+
+//         // SORTING LOGIC
+//         if(req.query.sort){
+//             const sortBy = req.query.sort.split(',').join(' ')
+//             query = query.sort(sortBy)
+//         }
+//         //SORTING LOGIC END
+
+
+
+//         // PAGINATION LOGIC
+
+//         // const page = req.query.page*1 || 1;
+//         // const limit = req.query.limit*1 || 10;
+//         // //page 1, 1-10; page2, 11-20
+
+//         // const skip = (page-1)*limit
+//         // query = query.skip(skip).limit(limit)
+
+//         // if(req.query.page){
+//         //     const ProductCount = await Product.countDocuments();
+//         //     if(skip>= ProductCount){
+//         //         throw new Error("This page is not found")
+//         //     }
+//         // }
+//         // end of pagination
+
+
+
+
+//         const products = await query;
+
+//         res.status(200).json({
+//             status:"success",
+//             length: products.length,
+//             data:{
+//                 products
+//             }
+//         })
+// });
+
+// with images
+
 exports.getAllProducts = asyncErrorHandler(async (req, res) => {
+    // QueryString (filter) logic
+    const excludeFields = ['sort', 'page', 'limit', 'fields'];
+    const queryObj = { ...req.query };
 
-            // QueryString (filter) logic
-        const excludeFields = ['sort','page','limit','fields']
+    excludeFields.forEach((el) => {
+        delete queryObj[el];
+    });
 
-        const queryObj = {...req.query}
+    let query = Product.find(queryObj);
 
-        excludeFields.forEach((el)=>{
-            delete queryObj[el]
-        })
+    // SORTING LOGIC
+    if (req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' ');
+        query = query.sort(sortBy);
+    }
 
-        let query =  Product.find(queryObj)
-        // logic end
+    // PAGINATION LOGIC
+    // const page = req.query.page * 1 || 1;
+    // const limit = req.query.limit * 1 || 10;
+    // const skip = (page - 1) * limit;
+    // query = query.skip(skip).limit(limit);
 
+    // if (req.query.page) {
+    //     const ProductCount = await Product.countDocuments();
+    //     if (skip >= ProductCount) {
+    //         throw new Error("This page is not found");
+    //     }
+    // }
 
+    const products = await query;
 
-        // SORTING LOGIC
-        if(req.query.sort){
-            const sortBy = req.query.sort.split(',').join(' ')
-            query = query.sort(sortBy)
+    // Construct the base URL for the images
+    const baseUrl = `${req.protocol}://${req.get('host')}/`;
+
+    // Append the base URL to the image paths
+    const productsWithImages = products.map(product => {
+        return {
+            ...product._doc,
+            images: product.images.map(img => baseUrl + img) // Prepend the base URL to each image path
+        };
+    });
+
+    res.status(200).json({
+        status: "success",
+        length: productsWithImages.length,
+        data: {
+            products: productsWithImages
         }
-        //SORTING LOGIC END
-
-
-
-        // PAGINATION LOGIC
-
-        // const page = req.query.page*1 || 1;
-        // const limit = req.query.limit*1 || 10;
-        // //page 1, 1-10; page2, 11-20
-
-        // const skip = (page-1)*limit
-        // query = query.skip(skip).limit(limit)
-
-        // if(req.query.page){
-        //     const ProductCount = await Product.countDocuments();
-        //     if(skip>= ProductCount){
-        //         throw new Error("This page is not found")
-        //     }
-        // }
-        // end of pagination
-
-
-
-
-        const products = await query;
-
-        res.status(200).json({
-            status:"success",
-            length: products.length,
-            data:{
-                products
-            }
-        })
+    });
 });
+
 
 // Get single product by ID
 exports.getProduct = asyncErrorHandler(async (req, res) => {
