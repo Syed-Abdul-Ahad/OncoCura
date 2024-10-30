@@ -6,22 +6,6 @@ const upload = require('./../utils/multerConfig'); // Multer configuration for i
 const router = express.Router()
 
 
-
-
-
-// router.route('/')
-//     .get(authController.protect,ProductController.getAllProducts)
-//     .post(authController.protect,authController.restrict('admin'),ProductController.addProduct)
-
-// router.route('/:id')
-//     .delete(authController.protect,authController.restrict('admin'),ProductController.deleteProduct)
-//     .get(authController.protect,ProductController.getProduct)
-//     .patch(authController.protect,authController.restrict('admin'),ProductController.updateProduct)
-
-
-
-
-
 // router.route('/')
 //     .get(authController.protect, ProductController.getAllProducts)
 //     .post(
@@ -45,11 +29,6 @@ const router = express.Router()
 router.route('/')
     .get( ProductController.getAllProducts)
     .post(
-// <<<<<<< HEAD
-//         authController.protect,
-//         authController.restrict('admin'),
-//         upload.array('image', 4),
-// =======
         upload.array('images', 4),
         ProductController.addProduct
     );
