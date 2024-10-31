@@ -76,7 +76,7 @@ const ProductSchema = new mongoose.Schema({
         type: String,
         required: [true, "price is a required field"]
     },
-    image: {
+    images: {
         type: [String],
         required: [true, "image is a required field"]
     }

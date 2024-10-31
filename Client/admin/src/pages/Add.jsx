@@ -120,7 +120,7 @@ import { backendUrl } from '../App';
 import { toast } from 'react-toastify';
 
 const Add = () => {
-  const [images, setImages] = useState([null, null, null, null]);
+  const [images, setImages] = useState([null,null,null,null]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [company, setCompany] = useState("");
@@ -131,6 +131,7 @@ const Add = () => {
     const files = [...images];
     files[index] = e.target.files[0];
     setImages(files);
+    console.log(files,"hello")
   };
 
   const onSubmitHandler = async (e) => {

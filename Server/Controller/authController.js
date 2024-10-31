@@ -227,9 +227,3 @@ exports.resetPassword = asyncErrorHandler(async (req,res,next)=>{
     })
 
 })
-
-
-
-
-
-
