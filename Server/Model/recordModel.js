@@ -3,30 +3,25 @@ const mongoose = require('mongoose');
 const recordSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
-    required: true,
+    ref: 'User',
+    required: true
   },
   recordName: {
     type: String,
     required: true,
+    unique: true
   },
   analysisResult: {
     type: String,
-    required: true,
+    required: true
   },
-  kanbanRecords: {
-    type: String,
-    required: true,
-  },
-  createdBy: {
-    type: String,
-    required: true,
-  },
-}, { timestamps: true },  // Adds createdAt and updatedAt fields automatically
-{
-    collection:'Record'
-}); 
+  kanbanRecords: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'TreatmentPlan' // Reference to TreatmentPlan
+    }
+  ]
+}, { timestamps: true });
 
 const Record = mongoose.model('Record', recordSchema);
-
 module.exports = Record;

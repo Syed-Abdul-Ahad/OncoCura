@@ -1,0 +1,162 @@
+[
+    {
+        "name": "Doxorubicin",
+        "company": "PharmaLife",
+        "type": "Chemotherapy",
+        "description": "An anthracycline antibiotic used to treat various cancers including breast cancer and leukemia.",
+        "price": 120,
+        "image": ["doxorubicin-front.jpg", "doxorubicin-back.jpg"]
+    },
+    {
+        "name": "Imatinib",
+        "company": "OncoMeds",
+        "type": "Targeted Therapy",
+        "description": "A targeted therapy drug used to treat chronic myeloid leukemia (CML) and gastrointestinal stromal tumors (GIST).",
+        "price": 200,
+        "image": ["imatinib-front.jpg", "imatinib-back.jpg"]
+    },
+    {
+        "name": "Paclitaxel",
+        "company": "HealWell",
+        "type": "Chemotherapy",
+        "description": "A chemotherapy medication used to treat ovarian, breast, and lung cancer.",
+        "price": 150,
+        "image": ["paclitaxel-front.jpg", "paclitaxel-back.jpg"]
+    },
+    {
+        "name": "Letrozole",
+        "company": "MediCure",
+        "type": "Hormone Therapy",
+        "description": "Used in the treatment of breast cancer in postmenopausal women.",
+        "price": 80,
+        "image": ["letrozole-front.jpg", "letrozole-back.jpg"]
+    },
+    {
+        "name": "Trastuzumab",
+        "company": "BioPharma",
+        "type": "Monoclonal Antibody",
+        "description": "A monoclonal antibody used to treat HER2-positive breast cancer.",
+        "price": 300,
+        "image": ["trastuzumab-front.jpg", "trastuzumab-back.jpg"]
+    },
+    {
+        "name": "Cisplatin",
+        "company": "OncoSolutions",
+        "type": "Chemotherapy",
+        "description": "A platinum-containing drug used for treating bladder, ovarian, and testicular cancers.",
+        "price": 100,
+        "image": ["cisplatin-front.jpg", "cisplatin-back.jpg"]
+    },
+    {
+        "name": "Anastrozole",
+        "company": "PharmaCare",
+        "type": "Hormone Therapy",
+        "description": "Commonly used in breast cancer treatment for postmenopausal women.",
+        "price": 75,
+        "image": ["anastrozole-front.jpg", "anastrozole-back.jpg"]
+    },
+    {
+        "name": "Capecitabine",
+        "company": "OncoMeds",
+        "type": "Chemotherapy",
+        "description": "An oral chemotherapy drug used to treat breast, colorectal, and gastric cancers.",
+        "price": 180,
+        "image": ["capecitabine-front.jpg", "capecitabine-back.jpg"]
+    },
+    {
+        "name": "Gemcitabine",
+        "company": "PharmaLife",
+        "type": "Chemotherapy",
+        "description": "Used to treat pancreatic, lung, and bladder cancer.",
+        "price": 160,
+        "image": ["gemcitabine-front.jpg", "gemcitabine-back.jpg"]
+    },
+    {
+        "name": "Pembrolizumab",
+        "company": "ImmunoCare",
+        "type": "Immunotherapy",
+        "description": "An immune checkpoint inhibitor used for treating melanoma and lung cancer.",
+        "price": 600,
+        "image": ["pembrolizumab-front.jpg", "pembrolizumab-back.jpg"]
+    },
+    {
+        "name": "Bevacizumab",
+        "company": "BioPharma",
+        "type": "Monoclonal Antibody",
+        "description": "Used in the treatment of colorectal, lung, and kidney cancers.",
+        "price": 500,
+        "image": ["bevacizumab-front.jpg", "bevacizumab-back.jpg"]
+    },
+    {
+        "name": "Tamoxifen",
+        "company": "PharmaCare",
+        "type": "Hormone Therapy",
+        "description": "A medication used to treat and prevent breast cancer.",
+        "price": 60,
+        "image": ["tamoxifen-front.jpg", "tamoxifen-back.jpg"]
+    },
+    {
+        "name": "Methotrexate",
+        "company": "OncoSolutions",
+        "type": "Chemotherapy",
+        "description": "Used for treating leukemia, breast cancer, and head and neck cancers.",
+        "price": 90,
+        "image": ["methotrexate-front.jpg", "methotrexate-back.jpg"]
+    },
+    {
+        "name": "Erlotinib",
+        "company": "OncoMeds",
+        "type": "Targeted Therapy",
+        "description": "A targeted therapy drug used to treat non-small cell lung cancer and pancreatic cancer.",
+        "price": 250,
+        "image": ["erlotinib-front.jpg", "erlotinib-back.jpg"]
+    },
+    {
+        "name": "Irinotecan",
+        "company": "PharmaLife",
+        "type": "Chemotherapy",
+        "description": "Commonly used in the treatment of colorectal cancer.",
+        "price": 130,
+        "image": ["irinotecan-front.jpg", "irinotecan-back.jpg"]
+    },
+    {
+        "name": "Vincristine",
+        "company": "HealWell",
+        "type": "Chemotherapy",
+        "description": "A chemotherapy drug used for leukemia, lymphoma, and brain tumors.",
+        "price": 140,
+        "image": ["vincristine-front.jpg", "vincristine-back.jpg"]
+    },
+    {
+        "name": "Sorafenib",
+        "company": "OncoSolutions",
+        "type": "Targeted Therapy",
+        "description": "A treatment option for liver, kidney, and thyroid cancers.",
+        "price": 280,
+        "image": ["sorafenib-front.jpg", "sorafenib-back.jpg"]
+    },
+    {
+        "name": "Bendamustine",
+        "company": "PharmaLife",
+        "type": "Chemotherapy",
+        "description": "Used to treat certain types of leukemia and lymphoma.",
+        "price": 220,
+        "image": ["bendamustine-front.jpg", "bendamustine-back.jpg"]
+    },
+    {
+        "name": "Nilotinib",
+        "company": "OncoMeds",
+        "type": "Targeted Therapy",
+        "description": "A targeted therapy for chronic myeloid leukemia (CML).",
+        "price": 230,
+        "image": ["nilotinib-front.jpg", "nilotinib-back.jpg"]
+    },
+    {
+        "name": "Oxaliplatin",
+        "company": "PharmaCare",
+        "type": "Chemotherapy",
+        "description": "Used in combination with other drugs to treat colorectal cancer.",
+        "price": 190,
+        "image": ["oxaliplatin-front.jpg", "oxaliplatin-back.jpg"]
+    }
+]
