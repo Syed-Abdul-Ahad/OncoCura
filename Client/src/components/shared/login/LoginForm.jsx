@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useGlobalContext } from "../../../context/GlobalContext";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -29,6 +30,7 @@ const formSchema = z.object({
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const { login } = useGlobalContext();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -49,6 +51,7 @@ const LoginForm = () => {
       );
 
       if (response.status === 200) {
+        login(); // Update the context state
         setTimeout(() => {
           navigate(`/user-profile/${response.data.user._id}`);
         }, 500);
