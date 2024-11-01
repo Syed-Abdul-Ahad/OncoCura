@@ -5,8 +5,11 @@ const GlobalContext = createContext();
 export const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  console.log("GlobalContext : ", isLoggedIn);
+
   const login = () => {
     setIsLoggedIn(true);
+    localStorage.setItem("login", true);
   };
 
   const logout = () => {

@@ -25,7 +25,9 @@ exports.createRecord = asyncErrorHandler(async (req, res, next) => {
 
 // Get all records for the authenticated user
 exports.getRecords = asyncErrorHandler(async (req, res) => {
-    const records = await Record.find({ userId: req.user._id }).populate('kanbanRecords');
+    const records = await Record.find({ userId: req.user._id }).populate(
+      "kanbanRecords"
+    );
 
     res.status(200).json({
         status: 'success',

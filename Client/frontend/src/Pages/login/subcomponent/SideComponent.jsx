@@ -26,7 +26,7 @@ const SideComponent = () => {
         <img
           src="./Group 66.png"
           alt=""
-          className="absolute ml-[35rem] mt-[37rem] w-[12vw]"
+          className="absolute ml-[35rem] mt-[33rem] w-[12vw]"
         />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useGlobalContext } from "../../../context/GlobalContext";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -30,7 +29,6 @@ const formSchema = z.object({
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { login } = useGlobalContext();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -39,6 +37,10 @@ const LoginForm = () => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    localStorage.setItem("login", false);
+  }, []);
 
   const onSubmit = async (values) => {
     try {
@@ -49,11 +51,10 @@ const LoginForm = () => {
           password: values.password,
         }
       );
-
       if (response.status === 200) {
-        login(); // Update the context state
+        localStorage.setItem("login", true);
         setTimeout(() => {
-          navigate(`/user-profile/${response.data.user._id}`);
+          navigate(`/records`);
         }, 500);
       } else {
         throw new Error("Failed to login");

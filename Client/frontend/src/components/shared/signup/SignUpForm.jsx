@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -84,6 +84,10 @@ const SignUpForm = () => {
     }
   };
 
+  useEffect(() => {
+    localStorage.setItem("login", false);
+  }, []);
+
   return (
     <div className="w-full max-w-md p-8 space-y-6 rounded-lg h-[600px]">
       <div className="flex flex-col items-center gap-4">
@@ -94,7 +98,7 @@ const SignUpForm = () => {
           Already have an account?{" "}
           <span
             className="text-blue-700 underline cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
           >
             Login
           </span>

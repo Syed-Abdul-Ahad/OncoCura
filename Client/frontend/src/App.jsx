@@ -18,12 +18,12 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route element={<RootLayout />}>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/user-profile/:id" element={<UserProfilePage />} />
         <Route path="/records" element={<Records />} />
-        {/* <Route path="generate-plan" element={<KanbanBoard />} /> */}
+        <Route path="generate-plan" element={<KanbanBoard />} />
       </Route>
     )
   );
