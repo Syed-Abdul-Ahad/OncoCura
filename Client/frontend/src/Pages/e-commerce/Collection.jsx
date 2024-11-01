@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
-import ShopContext from '../context/ShopContext';
-import Title from '../components/Title';
+import ShopContext from '../../context/ShopContext';
+import Title from '../../components/shared/e-commerce/Title';
 import { useEffect } from 'react';
-import ProductItem from '../components/ProductItem';
+import ProductItem from '../../components/shared/e-commerce/ProductItem';
 
 const Collection = () => {
   const { products, search, showSearch } = useContext(ShopContext);

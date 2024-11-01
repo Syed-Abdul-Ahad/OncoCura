@@ -1,9 +1,9 @@
 import React from 'react'
-import Title from '../components/Title'
-import CartTotal from '../components/CartTotal'
+import Title from '../../components/shared/e-commerce/Title'
+import CartTotal from '../../components/shared/e-commerce/CartTotal'
 import { useState } from 'react'
 import { useContext } from 'react'
-import ShopContext from '../context/ShopContext'
+import ShopContext from '../../context/ShopContext'
 
 const PlaceOrder = () => {
   const [method,setMethod]=useState('cod')
