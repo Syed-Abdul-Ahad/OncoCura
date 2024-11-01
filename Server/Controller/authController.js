@@ -18,212 +18,233 @@ const signToken = (ID)=>{
 
 
 
-exports.signup = asyncErrorHandler(async (req,res,next)=>{
-    const newUser = await User.create(req.body)
+exports.signup = asyncErrorHandler(async (req, res, next) => {
+  const { email, password, confirmPassword, name } = req.body;
 
-    const token = signToken(newUser._id)
+  const existingUser = await User.findOne({ email });
 
-    res.status(201).json({
-        status:"success",
-        token,
-        data:{
-            user:newUser
-        }
-    })
-})
+  if (existingUser) {
+    return next(new customError("User already exists with this email", 400));
+  }
 
+  const newUser = await User.create(req?.body);
 
+  const token = signToken(newUser._id);
 
-exports.login = asyncErrorHandler(async (req,res,next)=>{
-    const email = req.body.email;
-    const password = req.body.password;
+  res.status(201).json({
+    status: "success",
+    token,
+    data: {
+      user: newUser,
+    },
+  });
+});
 
-    if(!email || !password){
-        const error = new customError('Please provide emailID and Password for login',400)
-        return next(error)
-    }
-    
+exports.login = asyncErrorHandler(async (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
 
+  if (!email || !password) {
+    const error = new customError(
+      "Please provide emailID and Password for login",
+      400
+    );
+    return next(error);
+  }
 
-    const user =  await User.findOne({email: email}).select('+password');
-    
-    const isMatch =  await user.comparePasswordInDB(password,user.password);
-    
-    if(!user || !isMatch){
-        const error = new customError('Incorrect email or password',400)
-        return next(error)
-    }
+  const user = await User.findOne({ email: email }).select("+password");
 
-    const token = signToken(user._id)
+  const isMatch = await user.comparePasswordInDB(password, user.password);
 
-    res.status(200).json({
-        status:"success",
-        token,
-        user
-    })
-})
+  if (!user || !isMatch) {
+    const error = new customError("Incorrect email or password", 400);
+    return next(error);
+  }
 
+  const token = signToken(user._id);
 
-
-
-
-
+  res.status(200).json({
+    status: "success",
+    token,
+    user,
+  });
+});
 
 // protecting routes  (making it a middleware which is used in differnet routes earlier before moving to other middleware)
 
-exports.protect = asyncErrorHandler(async (req,res,next)=>{
+exports.protect = asyncErrorHandler(async (req, res, next) => {
+  // 1) check if token exist?
 
-    // 1) check if token exist?
+  const testToken = req.headers.authorization;
 
+  let token;
+  if (testToken && testToken.startsWith("Bearer")) {
+    token = testToken.split(" ")[1];
+  }
+  if (!token) {
+    const error = new customError("You are not logged in", 401);
+    next(error);
+  }
 
-    const testToken = req.headers.authorization;
+  // 2) verify/validate token
 
-    let token;
-    if(testToken && testToken.startsWith('bearer')){
-        token = testToken.split(' ')[1]
-    }
+  // Promisify the jwt.verify method
+  const decodedToken = await util.promisify(jwt.verify)(
+    token,
+    process.env.SECRET_STR
+  );
 
-    if(!token){
-        const error = new customError('You are not logged in',401)
-        next(error)
-    }
+  // 3) If user exists? (after token user may have deleted the account)
 
+  const user = await User.findById(decodedToken.id);
 
+  if (!user) {
+    const err = new customError(
+      "The user with the given token doest exist",
+      401
+    );
+    next(err);
+  }
 
-    // 2) verify/validate token
+  // 4) If the user changed the password after the token has issued
 
+  const isPasswordChanged = await user.isPasswordChanged(decodedToken.iat);
+  if (isPasswordChanged) {
+    //from UserModel (passing it the time of jwt issued)
 
-    // Promisify the jwt.verify method
-    const decodedToken = await util.promisify(jwt.verify)(token,process.env.SECRET_STR);
+    const err = new customError(
+      "The password has been changed recently, please login again",
+      401
+    );
+    next(err);
+  }
 
-
-    // 3) If user exists? (after token user may have deleted the account)
-
-    const user = await User.findById(decodedToken.id)
-
-    if(!user){
-        const err = new customError('The user with the given token doest exist',401)
-        next(err);
-    }
-
-
-
-    // 4) If the user changed the password after the token has issued
-
-    const isPasswordChanged = await user.isPasswordChanged(decodedToken.iat)
-    if(isPasswordChanged){  //from UserModel (passing it the time of jwt issued)
-
-    const err = new customError('The password has been changed recently, please login again',401)
-    next(err)
-    }
-
-
-    // 5) allow user to access
-    req.user = user
-    next()
-     
-})
-
-
-
+  // 5) allow user to access
+  req.user = user;
+  next();
+});
 
 // middleware function for authorization
 
-exports.restrict = (role)=>{
-    return (req,res,next)=>{
-        if(req.user.role !== role){
-            const err = new customError("you do not have permission to perform that action",403)
-            next(err)
-        }
-        next()
+exports.restrict = (role) => {
+  return (req, res, next) => {
+    if (req.user.role !== role) {
+      const err = new customError(
+        "you do not have permission to perform that action",
+        403
+      );
+      next(err);
     }
-}
-
-
-
-
-
+    next();
+  };
+};
 
 // forgot password middleware
 
-exports.forgotPassword = asyncErrorHandler (async(req,res,next)=>{
+exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
+  //1. get user according to email
+  const user = await User.findOne({ email: req.body.email });
 
-    //1. get user according to email
-    const user = await User.findOne({email: req.body.email})
-    
-    
-    if(!user){
-        const error = new customError("We couldn't find the user with given email",404)
-        next(error)
-    }
+  if (!user) {
+    const error = new customError(
+      "We couldn't find the user with given email",
+      404
+    );
+    next(error);
+  }
 
+  //2. GENERATE A RANDOM RESET TOKEN
+  const resetToken = user.createResetPasswordToken();
+  await user.save({ validateBeforeSave: false });
 
-    //2. GENERATE A RANDOM RESET TOKEN
-    const resetToken = user.createResetPasswordToken();
-    await user.save({validateBeforeSave: false});
-    
-
-
-    //3. SEND THE TOKEN BACK TO THE USER EMAIL
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`
-    const message = `We have recieved a password reset request, please use the below link to reset your password\n\n ${resetUrl} \n\n This reset password link is valid only for 10 minutes`
-    try{
-        await sendEmail({
-            email: user.email,
-            subject: 'Password change request',
-            message: message
-        })
-
-        res.status(200).json({
-            status:"success",
-            message: 'password reset link send to the user email'
-        })
-    }
-    catch(err){
-        user.passwordResetToken = undefined
-        user.passwordResetTokenExpires = undefined
-        user.save({validateBeforeSave: false})
-        return next(new customError('There was an error sending password reset email. please try again', 500))
-    }
-
-})
-
-
-
-
-exports.resetPassword = asyncErrorHandler(async (req,res,next)=>{
-
-    const token = crypto.createHash('sha256').update(req.params.token).digest('hex')
-
-
-    const user = await User.findOne({passwordResetToken: token, passwordResetTokenExpires: {$gt: Date.now()}}) 
-
-
-    if(!user){
-        const err = new customError('Token is invalid or it has expired',400)
-        next(err)
-    }
-
-    console.log(user)
-
-    // reseting user password
-    user.password = req.body.password;
-    user.confirmPassword = req.body.confirmPassword;
-    user.passwordResetToken = undefined;
-    user.passwordResetTokenExpires = undefined;
-    user.passwordChangedAt = Date.now()
-
-    user.save();
-
-
-
-    // loging user again
-
-    const loginToken = signToken(user._id)
+  //3. SEND THE TOKEN BACK TO THE USER EMAIL
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/users/resetPassword/${resetToken}`;
+  const message = `We have recieved a password reset request, please use the below link to reset your password\n\n ${resetUrl} \n\n This reset password link is valid only for 10 minutes`;
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password change request",
+      message: message,
+    });
 
     res.status(200).json({
-        status:"success",
-        token : loginToken
-    })
+      status: "success",
+      message: "password reset link send to the user email",
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+    user.save({ validateBeforeSave: false });
+    return next(
+      new customError(
+        "There was an error sending password reset email. please try again",
+        500
+      )
+    );
+  }
+});
 
-})
+exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
+  const token = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: token,
+    passwordResetTokenExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    const err = new customError("Token is invalid or it has expired", 400);
+    next(err);
+  }
+
+  console.log(user);
+
+  // reseting user password
+  user.password = req.body.password;
+  user.confirmPassword = req.body.confirmPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetTokenExpires = undefined;
+  user.passwordChangedAt = Date.now();
+
+  user.save();
+
+  // loging user again
+
+  const loginToken = signToken(user._id);
+
+  res.status(200).json({
+    status: "success",
+    token: loginToken,
+  });
+});
+
+exports.changePassword = asyncErrorHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+});
+
+exports.getUserById = asyncErrorHandler(async (req, res, next) => {
+  const user = await User.findById({ _id: req.params.id });
+
+  console.log(user);
+
+  if (!user) {
+    const err = new customError("User not found", 404);
+    next(err);
+  }
+
+  res.status(200).json({
+    status: "success",
+    user,
+  });
+});
+
+
+
+
+
+

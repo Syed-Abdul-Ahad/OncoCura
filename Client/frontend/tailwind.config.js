@@ -1,12 +1,18 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+module.exports = {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        jockey: ['"Jockey One"', "sans-serif"],
+        poppins: ['"Poppins"', "sans-serif"],
+      },
+      fontSize: {
+        tiny: "0.625rem",
+        small: "0.7rem", // Example of a custom smaller font size
+      },
+    },
   },
-  plugins: [],
-}
+  plugins: [require("tailwindcss"), require("autoprefixer")],
+};
 

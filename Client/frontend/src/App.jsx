@@ -1,29 +1,40 @@
-import {Routes, Route} from 'react-router-dom'
-import './App.css'
-import Home from './pages/Home'
-import Collection from './pages/Collection'
-import Product from './pages/Product'
-import Cart from './pages/Cart'
-import PlaceOrder from './pages/PlaceOrder'
-import Orders from './pages/Orders'
-import Navbar from './components/Navbar'
-import SearchBar from './components/SearchBar'
+import React from "react";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+import LoginPage from "./Pages/login/loginPage";
+import SignUp from "./Pages/signup/signupPage";
+import UserProfilePage from "./Pages/UserProfile/userProfilePage";
+import Records from "./Pages/record/recordPage";
+import KanbanBoard from "./Pages/kanban-board/kanban-board";
+import Home from "./Pages/Home/Home";
+import RootLayout from "./layout/RootLayout";
+import { GlobalProvider } from "./context/GlobalContext";
 
-function App() {
-  return(
-    <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
-      <Navbar/>
-      <SearchBar/>
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/collection' element={<Collection/>}/>
-        <Route path='/product/:productId' element={<Product/>}/>
-        <Route path='/place-order' element={<PlaceOrder/>}/>
-        <Route path='/cart' element={<Cart/>}/>
-        <Route path='/orders' element={<Orders/>}/>
-      </Routes>
-    </div>
-  )
-}
+const App = () => {
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route element={<RootLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/user-profile/:id" element={<UserProfilePage />} />
+        <Route path="/records" element={<Records />} />
+        <Route path="generate-plan" element={<KanbanBoard />} />
+      </Route>
+    )
+  );
 
-export default App
+  return (
+    <>
+      <GlobalProvider>
+        <RouterProvider router={router} />
+      </GlobalProvider>
+    </>
+  );
+};
+
+export default App;
