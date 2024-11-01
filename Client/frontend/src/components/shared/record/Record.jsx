@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { useGlobalContext } from "@/context/GlobalContext";
 import SingleRecord from "./SingleRecord";
 
 const Record = () => {
@@ -28,10 +27,12 @@ const Record = () => {
   }, []);
 
   return (
-    <div className="bg-red-500 h-full w-full">
+    <div className=" flex flex-col gap-10  bg-red-500 h-full w-full mt-20 ">
       <div>
         <h1>Manage Your Records!</h1>
         <Button>Create new Record</Button>
+      </div>
+      <div>
         <SingleRecord records={records} />
       </div>
     </div>

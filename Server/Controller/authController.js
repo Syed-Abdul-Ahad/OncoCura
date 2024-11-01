@@ -77,15 +77,10 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
 
   const testToken = req.headers.authorization;
 
-  console.log("token before : ", testToken);
-
   let token;
   if (testToken && testToken.startsWith("Bearer")) {
     token = testToken.split(" ")[1];
   }
-
-  console.log("token after : ", token);
-
   if (!token) {
     const error = new customError("You are not logged in", 401);
     next(error);
