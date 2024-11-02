@@ -87,3 +87,35 @@ exports.getCart = asyncErrorHandler(async (req, res) => {
         }
       });
   })
+
+
+
+exports.calculateCartTotal = asyncErrorHandler(async (req, res) => {
+    const userId = req.user.id;
+
+    // Find cart for the user and populate product details
+    const cart = await Cart.findOne({ user: userId }).populate('items.product');
+  
+    if (!cart || cart.items.length === 0) {
+        return res.status(200).json({ message: 'Your cart is empty' });
+    }
+
+    // Calculate subtotal
+    const subtotal = cart.items.reduce((acc, item) => {
+        return acc + item.product.price * item.quantity;
+    }, 0);
+
+    // Add a fixed shipping fee of 10
+    const shippingFee = 10;
+    const total = subtotal + shippingFee;
+
+    res.status(200).json({
+        status: "Success",
+        data: {
+            cart,
+            subtotal,
+            shippingFee,
+            total
+        }
+    });
+});
