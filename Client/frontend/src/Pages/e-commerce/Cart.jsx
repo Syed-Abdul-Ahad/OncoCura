@@ -10,7 +10,8 @@ const Cart = () => {
 
   useEffect(() => {
     const tempData = [];
-    
+    console.log(`Cart items: ${cartItems}`);
+  
     if (products.length > 0 && Object.keys(cartItems).length > 0) {
       for (const itemId in cartItems) {
         if (cartItems[itemId] > 0) {
@@ -35,7 +36,7 @@ const Cart = () => {
             const productData = products.find((product) => product._id === item._id);
 
             // Ensure productData and productData.image are defined
-            if (!productData || !productData.image || !productData.image[0]) {
+            if (!productData || !productData.images || !productData.images[0]) {
               console.log(`Product data or image not available for item ID: ${item._id}`);
               return null; // Skip this item if data is missing
             }
@@ -43,7 +44,7 @@ const Cart = () => {
             return (
               <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'>
                 <div className='flex items-start gap-6'>
-                  <img className='w-16 sm:w-20' src={productData.image[0]} alt={productData.name} />
+                  <img className='w-16 sm:w-20' src={productData.images[0]} alt={productData.name} />
                   <p className='text-xs sm:text-lg font-medium'>{productData.name}</p>
                   <div className='flex items-center gap-5 mt-2'>
                     <p>{currency}{productData.price}</p>

@@ -29,6 +29,7 @@ exports.addToCart = asyncErrorHandler(async (req, res) => {
     await cart.save();
 
     const populatedCart = await cart.populate('items.product');
+    console.log(populatedCart)
 
     res.status(200).json({
       status: "Success",
