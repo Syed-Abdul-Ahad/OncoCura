@@ -1,53 +1,35 @@
-import React, { useContext, useEffect, useState } from "react";
-import { assets } from "../assets/assets";
-import { useLocation } from "react-router-dom";
-import { ShopContext } from "../../../context/ShopContext";
+import React, { useContext, useState } from 'react';
+import ShopContext from '../../../context/ShopContext';
+import { assets } from '../../../../public/assets';
 
 const SearchBar = () => {
-  const { search, setSearch, showSearch, setShowSearch } =
-    useContext(ShopContext);
-  // const [visible,setVisible] = useState(false)
-  const [visible, setVisible] = useState(true);
+  const { search, setSearch } = useContext(ShopContext);
+  const [inputValue, setInputValue] = useState(search); // Local state for input
 
-  // so that it remains only collection page not others
-  const location = useLocation();
+  const handleSearch = () => {
+    setSearch(inputValue); // Set the context state only when the search icon is clicked
+  };
 
-  // useEffect(() => {
-  //     // if (location.pathname.includes('collection' && showSearch)) {
-
-  //         if (location.pathname.includes('/' && showSearch)) {
-  //         setVisible(true)
-  //     }
-  //     else{
-  //         setVisible(false)
-  //     }
-
-  // }, [location])
-
-  return showSearch && visible ? (
-    <div className="border-t border-b bg-gray-50 text-center">
-      <div className="inline-flex items-center justify-center border border-gray-400 px-5 py-2 my-5 mx-3 rounded-full w-3/4 sm:w-1/2">
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="text-sm font-medium">Search</p>
+      <div className='flex items-center border-b border-gray-300 gap-28 rounded-none'>
         <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 outline-none bg-inherit text-sm"
-          type="text"
-          placeholder="Search"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)} // Update local state
+          className='flex-1 outline-none bg-inherit text-sm py-1'
+          type='text'
+          placeholder='Enter Name'
         />
-        <img
-          src={assets.search_icon}
-          alt="search icon"
-          className="w-5 cursor-pointer"
+        <img 
+          src={assets.search_icon} 
+          alt="search icon" 
+          className="w-5 cursor-pointer" 
+          onClick={handleSearch} // Trigger search on icon click
         />
       </div>
-      <img
-        onClick={() => setShowSearch(false)}
-        src={assets.cross_icon}
-        alt="cross icon"
-        className="inline w-5 cursor-pointer"
-      />
     </div>
-  ) : null;
-};
+  );
+}
 
 export default SearchBar;

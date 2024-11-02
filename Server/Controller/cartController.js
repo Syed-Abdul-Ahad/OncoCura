@@ -29,6 +29,7 @@ exports.addToCart = asyncErrorHandler(async (req, res) => {
     await cart.save();
 
     const populatedCart = await cart.populate('items.product');
+    console.log(populatedCart)
 
     res.status(200).json({
       status: "Success",
@@ -75,7 +76,9 @@ exports.getCart = asyncErrorHandler(async (req, res) => {
     const userId = req.user.id;
 
       const cart = await Cart.findOne({ user: userId }).populate('items.product');
-  
+
+      console.log("cart : ", cart);  
+      
       if (!cart) {
         return res.status(200).json({ message: 'Your cart is empty' });
       }
