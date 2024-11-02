@@ -32,7 +32,7 @@ const SideBar = () => {
         </li>
         <li className="flex flex-col items-center text-center my-4 sm:my-6">
           <a
-            href=""
+            href="/collection"
             className="text-black font-bold text-xs sm:text-sm flex flex-col items-center font-poppins"
           >
             <img

@@ -9,8 +9,16 @@ const RootLayout = () => {
   return (
     <>
       <Header />
-      {login === "true" && <SideBar />}
-      <Outlet />
+      <div className="flex">
+        {login === "true" && (
+          <div className="w-[10vw]">
+            <SideBar />
+          </div>
+        )}
+        <div className={login === "true" ? "w-[85vw] mr-6 ml-4" : "w-full"}>
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 };
