@@ -8,11 +8,6 @@ const Cart = () => {
   const { products, cartItems, currency, updateQuantity, navigate } =
     useContext(ShopContext);
 
-  console.log(
-    "Cart Items:",
-    cartItems.map((item) => item.quantity)
-  );
-
   return (
     <div className="border-t pt-14 ">
       <div className="text-2xl mb-3">
@@ -26,9 +21,9 @@ const Cart = () => {
             );
 
             if (!productData || !productData.images || !productData.images[0]) {
-              console.log(
-                `Product data or image not available for item ID: ${item._id}`
-              );
+              // console.log(
+              //   `Product data or image not available for item ID: ${item._id}`
+              // );
               return null;
             }
 

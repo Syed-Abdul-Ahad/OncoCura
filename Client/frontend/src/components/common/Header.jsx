@@ -6,7 +6,6 @@ import ShopContext from "../../context/ShopContext";
 const Header = () => {
   const isLoggedIn = localStorage.getItem("login");
   const { getCartCount } = useContext(ShopContext);
-  console.log("Header : ", isLoggedIn);
 
   return (
     <div className="w-full h-16 bg-white flex justify-between items-center px-12 shadow-md relative top-0 z-30">
@@ -15,17 +14,24 @@ const Header = () => {
       </div>
       {isLoggedIn === "true" ? (
         <div className="h-full flex justify-center items-center gap-x-6 mr-2">
-        <Link to='/cart' className="relative">
-          <img className="w-7 min-w-7" src={assets.cart_icon} alt="cart_icon" />
-          <p className="absolute right-[-2px] bottom-[-2px] w-4 text-center leading-4 bg-[#004DFF] text-white aspect-square rounded-full text-[8px] ">
-            {getCartCount}
-          </p>
-        </Link>
-        <Link to='#' className="relative">
-          <img className="w-[22px] min-w-[22px]" src={assets.order_icon} alt="order_icon" />
-        </Link>
-      </div>
-      
+          <Link to="/cart" className="relative">
+            <img
+              className="w-7 min-w-7"
+              src={assets.cart_icon}
+              alt="cart_icon"
+            />
+            <p className="absolute right-[-2px] bottom-[-2px] w-4 text-center leading-4 bg-[#004DFF] text-white aspect-square rounded-full text-[8px] ">
+              {getCartCount()}
+            </p>
+          </Link>
+          <Link to="#" className="relative">
+            <img
+              className="w-[22px] min-w-[22px]"
+              src={assets.order_icon}
+              alt="order_icon"
+            />
+          </Link>
+        </div>
       ) : (
         <div className="w-72 h-full flex justify-center items-center gap-x-4">
           <Link to="/login">

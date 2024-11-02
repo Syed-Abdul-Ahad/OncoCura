@@ -15,13 +15,12 @@ const ShopContextProvider = ({ children }) => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    console.log("Stored Token:", storedToken); // Log the retrieved token
 
     if (!token && storedToken) {
       setToken(storedToken);
       getUserCart(storedToken);
     }
-  }, [cartItems]);
+  }, [token]);
 
   const addToCart = async (itemId, quantity = 1) => {
     let cartData = structuredClone(cartItems);
@@ -31,13 +30,10 @@ const ShopContextProvider = ({ children }) => {
     } else {
       cartData[itemId] = 1;
     }
-    console.log("Token:", token);
 
     setCartItems(cartData);
-    console.log("Cart data after update:", cartData);
 
     if (token) {
-      console.log("Token:", token);
       try {
         const response = await axios.post(
           `${backendUrl}/api/v1/cart/add`,
@@ -48,15 +44,12 @@ const ShopContextProvider = ({ children }) => {
             },
           }
         );
-        console.log("API Response:", response); // Log the full response object
 
         if (response.data.status === "success") {
-          console.log("Item added to cart successfully");
         } else {
           toast.error(response.data.message);
         }
       } catch (error) {
-        console.error("Failed to add item to cart:", error);
         toast.error(error.message);
       }
     }
@@ -65,13 +58,7 @@ const ShopContextProvider = ({ children }) => {
   const updateQuantity = async ({ itemId, quantity }) => {
     let cartData = structuredClone(cartItems);
 
-    console.log("cart data : ", cartData);
-
-    console.log("Updating item:", itemId, "with quantity:", quantity);
-
-    const itemIndex = cartData.findIndex((item) => item._id === itemId);
-
-    console.log("Item index:", itemIndex);
+    const itemIndex = cartData.findIndex((item) => item?._id === itemId);
 
     if (itemIndex > -1) {
       cartData[itemIndex].quantity = quantity;
@@ -80,7 +67,6 @@ const ShopContextProvider = ({ children }) => {
     }
 
     setCartItems(cartData);
-    console.log(`Updated item: ${itemId} with quantity: ${quantity}`);
 
     if (token) {
       try {
@@ -93,19 +79,57 @@ const ShopContextProvider = ({ children }) => {
             },
           }
         );
-        console.log(
-          "API Response for updating item in cart:",
-          response.data.data.cart.items
-        );
 
         if (response.data.status === "Success") {
-          console.log("Item updated successfully");
-          toast.success("Successful update");
+          const updatedCartItems = response.data.data.cart.items;
+          setCartItems(updatedCartItems);
         } else {
           toast.error(response.data.message);
         }
       } catch (error) {
-        console.error("Failed to update item in cart:", error);
+        toast.error(error.message);
+      }
+    }
+
+    if (quantity === 0) {
+      await removeFromCart(itemId);
+    }
+  };
+
+  const removeFromCart = async (itemId) => {
+    let cartData = structuredClone(cartItems);
+
+    const itemIndex = cartData.findIndex((item) => item?._id === itemId);
+
+    if (itemIndex > -1) {
+      cartData.splice(itemIndex, 1);
+      setCartItems(cartData);
+    } else {
+      console.error("Item not found in cart:", itemId);
+      return;
+    }
+
+    if (token) {
+      try {
+        const response = await axios.post(
+          `${backendUrl}/api/v1/cart/remove`,
+          { productId: itemId },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("API Response:", response);
+
+        if (response.data.status === "Success") {
+          const updatedCartItems = response.data.data.cart.items;
+          console.log("Updated cart items:", updatedCartItems);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
         toast.error(error.message);
       }
     }
@@ -168,7 +192,6 @@ const ShopContextProvider = ({ children }) => {
         setCartItems(response.data.data.cart.items);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.message);
     }
   };
