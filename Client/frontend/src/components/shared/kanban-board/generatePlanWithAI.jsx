@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import UploadReport from "../../common/uploadFIle";
-import { KanbanBoard } from "./kanban-board"; // Import your KanbanBoard component
-import { Spinner } from "../../common/Spinner"; // Import your spinner component
+import { KanbanBoard } from "./kanban-board";
+import { Spinner } from "../../common/Spinner";
 
 export const GeneratePlan = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState(""); // State to hold analysis result
-  const [showKanban, setShowKanban] = useState(false); // State to control Kanban visibility
-  const [loading, setLoading] = useState(false); // State for loading
+  const [showKanban, setShowKanban] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const analysisResult = localStorage.getItem("analysisResult");
 
   const handleModelOpen = () => {
     setModalOpen(true);
@@ -18,22 +19,19 @@ export const GeneratePlan = () => {
   };
 
   const handleAnalyze = (result) => {
-    setAnalysisResult(result); // Update the analysis result
-    handleModelClose(); // Close the modal after analysis
+    handleModelClose();
   };
 
   const handleViewTreatmentPlan = async () => {
-    setLoading(true); // Set loading to true
+    setLoading(true);
 
-    // Simulate data fetching (replace this with your actual fetch logic)
-    await new Promise((resolve) => setTimeout(resolve, 2500)); // Simulates a 2-second delay
-    setLoading(false); // Set loading to false after fetching data
-
-    setShowKanban(true); // Set Kanban visibility to true
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+    setLoading(false);
+    setShowKanban(true);
   };
 
   if (showKanban) {
-    return <KanbanBoard />; // Render KanbanBoard if showKanban is true
+    return <KanbanBoard />;
   }
 
   return (
@@ -57,29 +55,20 @@ export const GeneratePlan = () => {
             A tailored Medical Solution By AI to Help you with your treatment.
           </p>
         </div>
-        {/* <div className="border-b border-gray-300 mb-5 font-poppins">
-                    <h3 className="text-lg font-semibold text-black mb-5">Analysis Results</h3>
-                    <p className="text-gray-600 text-base text-justify">
-                        {analysisResult}
-                    </p>
-                </div> */}
         <div className="border-b border-gray-300 mb-5 font-poppins">
           <h3 className="text-lg font-semibold text-black mb-5">
             Analysis Results
           </h3>
           <div className="text-gray-600 text-base text-justify">
             {analysisResult.split("\n").map((line, index) => {
-              line = line.trim(); // Remove leading/trailing whitespace
+              line = line.trim();
 
-              // Handle bullet points that start with "•"
               if (line.startsWith("•")) {
-                // Use regex to find bold text in the line
                 const boldRegex = /\*\*(.*?)\*\*/g;
                 const formattedLine = line.replace(
                   boldRegex,
                   "<strong>$1</strong>"
-                ); // Replace with HTML <strong> tags
-
+                );
                 return (
                   <p
                     key={index}
@@ -89,12 +78,11 @@ export const GeneratePlan = () => {
                 );
               }
 
-              // Handle regular lines with bold text
               const boldRegex = /\*\*(.*?)\*\*/g;
               const formattedLine = line.replace(
                 boldRegex,
                 "<strong>$1</strong>"
-              ); // Replace with HTML <strong> tags
+              );
 
               return (
                 <p
@@ -145,7 +133,6 @@ export const GeneratePlan = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
           <div className="rounded-lg w-11/12 sm:w-[500px] md:w-[400px] lg:w-[350px] h-auto p-5 shadow-lg relative">
-            {/* Close button with responsive positioning */}
             <a
               className="absolute top-4 right-6 sm:-top-20 sm:right-8 md:-top-28 md:right-11 cursor-pointer z-40 p-2"
               onClick={handleModelClose}

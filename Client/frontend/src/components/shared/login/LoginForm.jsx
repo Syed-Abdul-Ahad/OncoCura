@@ -29,6 +29,7 @@ const formSchema = z.object({
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token") || "";
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -38,8 +39,10 @@ const LoginForm = () => {
     },
   });
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
-    localStorage.setItem("login", false);
+    localStorage.setItem("login", "false");
   }, []);
 
   const onSubmit = async (values) => {
@@ -49,10 +52,17 @@ const LoginForm = () => {
         {
           email: values.email,
           password: values.password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
         localStorage.setItem("login", true);
+        setErrorMessage("");
         setTimeout(() => {
           navigate(`/records`);
         }, 500);
@@ -60,6 +70,9 @@ const LoginForm = () => {
         throw new Error("Failed to login");
       }
     } catch (error) {
+      setErrorMessage(
+        "Login failed. Please check your credentials and try again."
+      );
       console.error("Error:", error);
     }
   };
@@ -133,6 +146,9 @@ const LoginForm = () => {
             </Button>
           </form>
         </Form>
+        {errorMessage && (
+          <div className="text-red-500 text-center">{errorMessage}</div>
+        )}
       </div>
     </div>
   );

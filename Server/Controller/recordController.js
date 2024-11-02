@@ -2,25 +2,25 @@ const Record = require('./../Model/recordModel');
 const customError = require('./../utils/customError');
 const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
-// Create a new record
 exports.createRecord = asyncErrorHandler(async (req, res, next) => {
-    const { recordName, analysisResult, kanbanRecords } = req.body;
+  const { recordName, analysisResult, kanbanRecords, summary } = req.body;
 
-    // Ensure userId is taken from the authenticated user (from req.user set in the protect middleware)
-    const userId = req.user._id;
+  const userId = req.user._id;
 
-    // Create the new record
-    const newRecord = await Record.create({
-        userId,
-        recordName,
-        analysisResult,
-        kanbanRecords: kanbanRecords || [] // Default to empty array if not provided
-    });
+  console.log("userId ; ", userId);
 
-    res.status(201).json({
-        status: 'success',
-        data: { record: newRecord }
-    });
+  const newRecord = await Record.create({
+    userId,
+    recordName,
+    analysisResult,
+    summary,
+    kanbanRecords: kanbanRecords || [],
+  });
+
+  res.status(201).json({
+    status: "success",
+    data: { record: newRecord },
+  });
 });
 
 // Get all records for the authenticated user

@@ -38,7 +38,7 @@ const formSchema = z
 
 const SignUpForm = () => {
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -50,43 +50,44 @@ const SignUpForm = () => {
     },
   });
 
+  const handleSignUp = async (values) => {
+    return await axios.post("http://localhost:3000/api/v1/users/signup", {
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+    });
+  };
+
+  const handleError = (error) => {
+    if (error.response && error.response.status === 400) {
+      const message = error.response.data?.message;
+      if (response.status !== 201) {
+        setErrorMessage("A user with this email already exists.");
+      } else {
+        setErrorMessage("Failed to sign up. Please try again.");
+      }
+    } else {
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    }
+    console.error(
+      "Error during signup:",
+      error.response?.data?.message || error.message
+    );
+  };
+
   const onSubmit = async (values) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/users/signup",
-        {
-          name: values.name,
-          email: values.email,
-          password: values.password,
-          confirmPassword: values.confirmPassword,
-        }
-      );
-
+      const response = await handleSignUp(values);
       if (!response.status === 201) {
         throw new Error("Failed to sign up");
       }
+      localStorage.setItem("login", "false");
       navigate("/login");
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        const message = error.response.data?.message;
-        if (message === "User already exists with this email") {
-          setErrorMessage("A user with this email already exists.");
-        } else {
-          setErrorMessage("Failed to sign up. Please try again.");
-        }
-      } else {
-        setErrorMessage("An unexpected error occurred. Please try again.");
-      }
-      console.error(
-        "Error during signup:",
-        error.response?.data?.message || error.message
-      );
+      handleError(error);
     }
   };
-
-  useEffect(() => {
-    localStorage.setItem("login", false);
-  }, []);
 
   return (
     <div className="w-full max-w-md p-8 space-y-6 rounded-lg h-[600px]">
