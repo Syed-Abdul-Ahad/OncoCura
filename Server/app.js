@@ -11,7 +11,10 @@ const GlobalErrorHandler = require("./Controller/ErrorController")
 const customError = require('./utils/customError')
 
 const app = express()
-app.use(cors())
+
+const allowedOrigins = "http://localhost:5173";
+
+app.use(cors({ allowedOrigins }));
 
 app.use(express.json())
 
