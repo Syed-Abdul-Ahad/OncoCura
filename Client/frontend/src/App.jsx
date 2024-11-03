@@ -19,6 +19,8 @@ import Collection from "./Pages/e-commerce/Collection";
 import ShopContextProvider from "./context/ShopContextProvider";
 import Product from "./Pages/e-commerce/Product";
 import Cart from "./Pages/e-commerce/Cart";
+import PlaceOrder from "./Pages/e-commerce/PlaceOrder";
+import Orders from "./Pages/e-commerce/Orders";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -33,6 +35,8 @@ const App = () => {
         <Route path="/collection" element={<Collection />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/placeorder" element={<PlaceOrder />} />
+        <Route path="/orders" element={<Orders />} />
       </Route>
     )
   );

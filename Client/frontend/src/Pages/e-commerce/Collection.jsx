@@ -119,7 +119,8 @@ const Collection = () => {
                 name={item?.name}
                 price={item?.price}
                 type={item?.type}
-                company={company?.company}
+                company={item?.company}
+                description={item?.description}
               />
             ))}
           </div>

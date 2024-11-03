@@ -21,7 +21,7 @@ const Header = () => {
             {getCartCount}
           </p>
         </Link>
-        <Link to='#' className="relative">
+        <Link to='/orders' className="relative">
           <img className="w-[22px] min-w-[22px]" src={assets.order_icon} alt="order_icon" />
         </Link>
       </div>
