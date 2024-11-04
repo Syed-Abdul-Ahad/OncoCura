@@ -27,7 +27,10 @@ export function KanbanBoard({ state }) {
   ];
 
   const [columns, setColumns] = useState(defaultCols);
-  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+  const columnsId = useMemo(
+    () => (columns && columns?.map((col) => col?.id)) || "",
+    [columns]
+  );
   const [tasks, setTasks] = useState(defaultTasks);
   const [activeColumn, setActiveColumn] = useState(null);
   const [activeTask, setActiveTask] = useState(null);
@@ -44,7 +47,7 @@ export function KanbanBoard({ state }) {
       setLoading(true);
       try {
         const response = await fetch(
-          "http://localhost:3000/api/generate-kanban",
+          "http://localhost:3000/api/v1/kanban/generate-kanban",
           {
             method: "POST",
             headers: {
@@ -56,15 +59,11 @@ export function KanbanBoard({ state }) {
           }
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch Kanban data");
-        }
-
         const data = await response.json();
-        console.log("Fetched columns:", data.columns);
-        console.log("Fetched tasks:", data.tasks);
-        setColumns(data.columns);
-        setTasks(data.tasks);
+        console.log("data : ", data);
+
+        setColumns(data?.columns);
+        setTasks(data?.tasks);
       } catch (error) {
         setError(error.message);
         console.error("Error fetching Kanban data:", error);
@@ -95,18 +94,19 @@ export function KanbanBoard({ state }) {
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
             <SortableContext items={columnsId}>
-              {columns.map((col) => (
-                <ColumnContainer
-                  key={col.id}
-                  column={col}
-                  deleteColumn={deleteColumn}
-                  updateColumn={updateColumn}
-                  createTask={createTask}
-                  deleteTask={deleteTask}
-                  updateTask={updateTask}
-                  tasks={tasks.filter((task) => task.columnId === col.id)}
-                />
-              ))}
+              {columns &&
+                columns?.map((col) => (
+                  <ColumnContainer
+                    key={col.id}
+                    column={col}
+                    deleteColumn={deleteColumn}
+                    updateColumn={updateColumn}
+                    createTask={createTask}
+                    deleteTask={deleteTask}
+                    updateTask={updateTask}
+                    tasks={tasks.filter((task) => task.columnId === col.id)}
+                  />
+                ))}
             </SortableContext>
           </div>
           <button
@@ -127,8 +127,8 @@ export function KanbanBoard({ state }) {
                 createTask={createTask}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
-                tasks={tasks.filter(
-                  (task) => task.columnId === activeColumn.id
+                tasks={tasks?.filter(
+                  (task) => task?.columnId === activeColumn?.id
                 )}
               />
             )}
@@ -140,7 +140,7 @@ export function KanbanBoard({ state }) {
               />
             )}
           </DragOverlay>,
-          document.body
+          document?.body
         )}
       </DndContext>
     </div>

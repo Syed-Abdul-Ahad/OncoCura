@@ -9,14 +9,14 @@ function UploadReport({ onAnalyze }) {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    console.log("File selected:", selectedFile); // Debugging line
+    console.log("File selected:", selectedFile);
     handleFile(selectedFile);
   };
 
   const handleDrop = (event) => {
     event.preventDefault();
     const selectedFile = event.dataTransfer.files[0];
-    console.log("File dropped:", selectedFile); // Debugging line
+    console.log("File dropped:", selectedFile);
     handleFile(selectedFile);
   };
 
@@ -25,7 +25,7 @@ function UploadReport({ onAnalyze }) {
     if (selectedFile) {
       if (allowedFileTypes.includes(selectedFile.type)) {
         if (selectedFile.size <= 5 * 1024 * 1024) {
-          console.log("File accepted:", selectedFile); // Debugging line
+          console.log("File accepted:", selectedFile);
           setFile(selectedFile);
           setFileName(selectedFile.name);
           setErrorMessage("");
@@ -42,30 +42,36 @@ function UploadReport({ onAnalyze }) {
         setFile(null);
       }
     } else {
-      setErrorMessage("No file selected."); // Handling case when no file is selected
+      setErrorMessage("No file selected.");
     }
   };
 
   const handleFileUpload = async () => {
-    console.log("File received for upload:", file); // Debugging line
+    console.log("File received for upload:", file);
     setUploadStatus("Uploading...");
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:3000/api/analyze", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:3000/api/v1/analyze/analyze-report",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to analyze document");
       }
-
       const data = await response.json();
+      console.log("data : ", data);
+      const analysisResult = localStorage.setItem(
+        "analysisResult",
+        data.summary
+      );
       onAnalyze(data.summary || "No summary available.");
       setUploadStatus("File uploaded and analyzed successfully!");
-      // Reset state after successful upload
       setFile(null);
       setFileName("");
     } catch (error) {
@@ -77,10 +83,10 @@ function UploadReport({ onAnalyze }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (file) {
-      await handleFileUpload(); // Call the upload function directly
+      await handleFileUpload();
     } else {
       console.log("No file to upload");
-      setErrorMessage("Please select a file before uploading."); // Add error message if no file
+      setErrorMessage("Please select a file before uploading.");
     }
   };
 

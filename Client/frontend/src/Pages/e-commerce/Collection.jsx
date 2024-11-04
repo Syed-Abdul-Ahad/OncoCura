@@ -66,9 +66,7 @@ const Collection = () => {
   return (
     <>
       <h1 className='text-black font-semibold text-center text-4xl my-10'>Welcome to Estore!</h1>
-      <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-2 bg-white rounded-xl border border-gray-200 shadow-xl">
-        <div className="w-full bg-white px-12 py-6 mb-2">
-          <div className="flex justify-between items-center mb-10">
+      <div className="flex justify-between items-center w-full px-10 py-4">
             {/* Filters Section */}
             <div className="flex items-center gap-4">
             <div className="flex flex-col gap-1">
@@ -105,6 +103,9 @@ const Collection = () => {
               <option value="high-low">Sort by Price: High to Low</option>
             </select>
           </div>
+      <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-2 bg-white rounded-xl border border-gray-200 shadow-xl">
+        <div className="w-full px-12 py-6 mb-2">
+          
           {/* Title Section */}
           <Title text1="ALL" text2="PRODUCTS" />
 
@@ -118,7 +119,8 @@ const Collection = () => {
                 name={item?.name}
                 price={item?.price}
                 type={item?.type}
-                company={company?.company}
+                company={item?.company}
+                description={item?.description}
               />
             ))}
           </div>

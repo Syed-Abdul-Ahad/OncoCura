@@ -4,6 +4,7 @@ import cross_icon from './pngwing.com (2).png'
 import bin_icon from './bin.png'
 import cart_icon from './cart.png'
 import order_icon from './order_icon.png'
+import parcel_icon from './parcel_icon.svg'
 
 
 export const assets = {
@@ -12,5 +13,6 @@ export const assets = {
     cross_icon,
     bin_icon,
     cart_icon,
-    order_icon
+    order_icon,
+    parcel_icon
 }
