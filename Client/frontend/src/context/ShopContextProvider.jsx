@@ -60,72 +60,118 @@ const ShopContextProvider = ({ children }) => {
   //     }
   //   }
   // };
-  const addToCart = async (itemId, quantity = 1) => {
-    let cartData = [...cartItems];
-    const existingItem = cartData.find(item => item.product._id === itemId);
+//   const addToCart = async (itemId, quantity = 1) => {
+//     let cartData = [...cartItems];
+//     const existingItem = cartData.find(item => item.product._id === itemId);
     
-    if (existingItem) {
-        existingItem.quantity += quantity;
-    } else {
-        const productToAdd = products.find(p => p._id === itemId);
-        if (productToAdd) {
-            cartData.push({ product: productToAdd, quantity });
-        }
-    }
+//     if (existingItem) {
+//         existingItem.quantity += quantity;
+//     } else {
+//         const productToAdd = products.find(p => p._id === itemId);
+//         if (productToAdd) {
+//             cartData.push({ product: productToAdd, quantity });
+//         }
+//     }
 
-    setCartItems(cartData);
+//     setCartItems(cartData);
 
-    // Send the request to the backend
-    if (token) {
-        try {
-            const response = await axios.post(
-                `${backendUrl}/api/v1/cart/add`,
-                { productId: itemId, quantity },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            if (response.data.status === "Success") {
-                toast.success("Item added!");
-            } else {
-                toast.error(response.data.message);
-            }
-        } catch (error) {
-            console.error("Failed to add item to cart:", error);
-            toast.error(error.message);
-        }
-    }
+//     // Send the request to the backend
+//     if (token) {
+//         try {
+//             const response = await axios.post(
+//                 `${backendUrl}/api/v1/cart/add`,
+//                 { productId: itemId, quantity },
+//                 { headers: { Authorization: `Bearer ${token}` } }
+//             );
+//             if (response.data.status === "Success") {
+//                 toast.success("Item added!");
+//             } else {
+//                 toast.error(response.data.message);
+//             }
+//         } catch (error) {
+//             console.error("Failed to add item to cart:", error);
+//             toast.error(error.message);
+//         }
+//     }
+// };
+
+const addToCart = async (itemId, quantity = 1) => {
+  let cartData = [...cartItems];
+
+  // Check if the item already exists in the cart
+  const existingItem = cartData.find(item => item.product?._id === itemId);
+  
+  if (existingItem) {
+      // Update quantity if item is found
+      existingItem.quantity += quantity;
+  } else {
+      // Add new product if it doesn't exist in the cart
+      const productToAdd = products.find(p => p._id === itemId);
+      if (productToAdd) {
+          cartData.push({ product: productToAdd, quantity });
+      } else {
+          console.error("Product not found in products array.");
+          return; // Stop further execution if the product doesn't exist
+      }
+  }
+
+  // Optimistically update the cart state
+  setCartItems(cartData);
+
+  // Send the request to the backend
+  if (token) {
+      try {
+          const response = await axios.post(
+              `${backendUrl}/api/v1/cart/add`,
+              { productId: itemId, quantity },
+              { headers: { Authorization: `Bearer ${token}` } }
+          );
+          
+          // Check the backend response for success
+          if (response.data?.status === "Success") {
+              toast.success("Item added!");
+          } else {
+              // Rollback the state update if the response is not successful
+              setCartItems(cartItems); // Restore original cartItems
+              toast.error(response.data?.message || "Failed to add item to cart.");
+          }
+      } catch (error) {
+          console.error("Failed to add item to cart:", error);
+          toast.error("An error occurred while adding item to cart.");
+
+          // Rollback state on error
+          setCartItems(cartItems); // Restore original cartItems
+      }
+  }
 };
 
-  
 
-  const updateQuantity = async ({ itemId, quantity }) => {
-    let cartData = structuredClone(cartItems);
-    cartData[itemId] = quantity;
-    setCartItems(cartData);
-    console.log(`Item:${itemId} and q: ${quantity}`);
-    
-    if (token) {
-      try {
-        const response = await axios.post(
-          `${backendUrl}/api/v1/cart/add`,
-          { productId: itemId, quantity },
-          {  headers: {
-            Authorization: `Bearer ${token}`,}}
-        );
-        console.log(response);
-        
-        if (response.data.status === "success") {
-          console.log("Item Update successfully");
+const updateQuantity = async ({ itemId, quantity }) => {
+  let cartData = cartItems.map((item) =>
+    item.product._id === itemId ? { ...item, quantity } : item
+  );
+  setCartItems(cartData);
 
-          toast.success("successful update")
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        console.error("Failed to add item to cart:", error);
-        toast.error(error.message);
+  if (token) {
+    try {
+      const response = await axios.post(
+        `${backendUrl}/api/v1/cart/add`,
+        { productId: itemId, quantity },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.status === "Success") { // Check response status based on API
+        toast.success("Item updated successfully");
+      } else {
+        toast.error(response.data.message);
       }
+    } catch (error) {
+      console.error("Failed to update item in cart:", error);
+      toast.error(error.message);
     }
-  };
+  }
+};
+
 
 
 
@@ -155,7 +201,7 @@ const ShopContextProvider = ({ children }) => {
   // };
 
   const removeFromCart = async (itemId) => {
-    const updatedCart = cartItems.filter(item => item.product._id !== itemId);
+    const updatedCart = cartItems.filter((item) => item?.product?._id !== itemId);
     setCartItems(updatedCart);
   
     if (token) {
@@ -165,13 +211,15 @@ const ShopContextProvider = ({ children }) => {
           { productId: itemId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (response.data.status === "success") {
+  
+        if (response.data.status === "Success") { // Check status as per API
           toast.success("Item removed from cart");
         } else {
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error("Failed to remove item from cart");
+        console.error("Failed to remove item from cart:", error);
+        toast.error("Failed to remove item from cart.");
       }
     }
   };
@@ -221,10 +269,23 @@ const ShopContextProvider = ({ children }) => {
     }, 0);
 };
   
-  const getCartCount = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
-  
+// const getCartCount = () => {
+//   console.log("Cart Items: ", cartItems);
+//   return cartItems.reduce((total, item) => {
+//     return total + (item?.quantity || 0); // Add item.quantity if it exists; otherwise, add 0
+//   }, 0);
+// };
+
+const getCartCount = () => {
+  if (!Array.isArray(cartItems)) {
+    console.warn("cartItems is not an array:", cartItems);
+    return 0; // Return 0 if cartItems is not an array
+  }
+  return cartItems.reduce((total, item) => {
+    return total + (item?.quantity || 0);
+  }, 0);
+};
+
 
   const getProductsData = async () => {
     try {

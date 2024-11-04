@@ -167,30 +167,66 @@ const Orders = () => {
 
   const loadOrderData = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/v1/checkout/my-order', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      console.log(response);
-
-      if (response.data.status === "Success") {
-        const checkout = response.data.data.checkout; // Access the checkout data
-        const allOrdersItem = checkout.cart.items.map((item) => {
-          return {
-            productId: item.product._id, // Product ID
-            name: item.product.name, // Product name
-            price: item.product.price, // Product price
-            quantity: item.quantity, // Ordered quantity
-            date: checkout.placedAt, // Date when the order was placed
-          };
+        const response = await axios.get(backendUrl + '/api/v1/checkout/my-order', {
+            headers: { Authorization: `Bearer ${token}` }
         });
 
-        setOrderData(allOrdersItem.reverse());
-      }
+        console.log(response);
+
+        if (response.data.status === "Success") {
+            const checkout = response.data.data.checkout; // Access the checkout data
+            console.log("Checkout data:", checkout);
+            console.log("Checkout items:", checkout.cart.items);
+
+            const allOrdersItem = checkout.cart.items.map((item) => {
+                if (!item.product) {
+                    console.warn(`Missing product for item: ${item}`);
+                    return null; // Handle missing product
+                }
+                return {
+                    productId: item.product._id,
+                    name: item.product.name,
+                    price: item.product.price,
+                    quantity: item.quantity,
+                    date: checkout.placedAt,
+                };
+            }).filter(item => item !== null); // Filter out null items
+
+            setOrderData(allOrdersItem.reverse());
+        }
     } catch (error) {
-      console.error("Error fetching order data:", error);
+        console.error("Error fetching order data:", error);
     }
-  };
+};
+
+  // const loadOrderData = async () => {
+  //   try {
+  //     const response = await axios.get(backendUrl + '/api/v1/checkout/my-order', {
+  //       headers: { Authorization: `Bearer ${token}` }
+  //     });
+
+  //     console.log(response);
+
+  //     if (response.data.status === "Success") {
+  //       console.log(response);
+        
+  //       const checkout = response.data.data.checkout; // Access the checkout data
+  //       const allOrdersItem = checkout.cart.items.map((item) => {
+  //         return {
+  //           productId: item.product._id, // Product ID
+  //           name: item.product.name, // Product name
+  //           price: item.product.price, // Product price
+  //           quantity: item.quantity, // Ordered quantity
+  //           date: checkout.placedAt, // Date when the order was placed
+  //         };
+  //       });
+
+  //       setOrderData(allOrdersItem.reverse());
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching order data:", error);
+  //   }
+  // };
 
   useEffect(() => {
     loadOrderData();

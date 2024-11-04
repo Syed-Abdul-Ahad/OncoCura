@@ -7,7 +7,10 @@ const Header = () => {
   const isLoggedIn = localStorage.getItem("login");
   const { getCartCount } = useContext(ShopContext);
   console.log("Header : ", isLoggedIn);
+  const cartCount = getCartCount();
+  console.log("Total Cart Count: ", cartCount);  // Should print a number
 
+  
   return (
     <div className="w-full h-16 bg-white flex justify-between items-center px-12 shadow-md relative top-0 z-30">
       <div className="w-40 h-full flex justify-center items-center">
@@ -17,8 +20,8 @@ const Header = () => {
         <div className="h-full flex justify-center items-center gap-x-6 mr-2">
         <Link to='/cart' className="relative">
           <img className="w-7 min-w-7" src={assets.cart_icon} alt="cart_icon" />
-          <p className="absolute right-[-2px] bottom-[-2px] w-4 text-center leading-4 bg-[#004DFF] text-white aspect-square rounded-full text-[8px] ">
-            {getCartCount}
+          <p className="absolute right-[-2px] bottom-[-2px] w-4 text-center leading-4 bg-[#004DFF] text-white aspect-square rounded-full text-[10px] ">
+            {getCartCount()}
           </p>
         </Link>
         <Link to='/orders' className="relative">

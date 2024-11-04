@@ -20,7 +20,7 @@ exports.createCheckout = asyncErrorHandler(async (req, res) => {
     // Create a new checkout record
     const checkout = await Checkout.create({
         user: userId,
-        cart: cart,
+        cart: cart.items,
         firstName,
         lastName,
         email,
@@ -65,7 +65,45 @@ exports.createCheckout = asyncErrorHandler(async (req, res) => {
 
 
 
-// Get a user's checkout details
+// // Get a user's checkout details
+// exports.getCheckout = asyncErrorHandler(async (req, res) => {
+//     const userId = req.user.id;
+
+//     // Find the checkout details for the user and populate cart items and product details
+//     const checkout = await Checkout.findOne({ user: userId })
+//         .populate({
+//             path: 'cart',
+//             populate: {
+//                 path: 'items.product',
+//                 select: 'name price'
+//             }
+//         });
+
+//     if (!checkout) {
+//         return res.status(404).json({ message: 'No checkout found for this user' });
+//     }
+
+//     // Calculate subtotal and total
+//     const subtotal = checkout.cart.items.reduce((acc, item) => {
+//         return acc + item.product.price * item.quantity;
+//     }, 0);
+//     const shippingFee = 10;
+//     const total = subtotal + shippingFee;
+
+//     res.status(200).json({
+//         status: 'Success',
+//         data: {
+//             checkout,
+//             subtotal,
+//             shippingFee,
+//             total
+//         }
+//     });
+// });
+
+
+
+
 exports.getCheckout = asyncErrorHandler(async (req, res) => {
     const userId = req.user.id;
 
@@ -85,8 +123,12 @@ exports.getCheckout = asyncErrorHandler(async (req, res) => {
 
     // Calculate subtotal and total
     const subtotal = checkout.cart.items.reduce((acc, item) => {
-        return acc + item.product.price * item.quantity;
+        if (item.product) {
+            return acc + item.product.price * item.quantity;
+        }
+        return acc; // Skip this item if product is null
     }, 0);
+    
     const shippingFee = 10;
     const total = subtotal + shippingFee;
 
@@ -100,5 +142,3 @@ exports.getCheckout = asyncErrorHandler(async (req, res) => {
         }
     });
 });
-
-
