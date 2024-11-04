@@ -33,25 +33,25 @@ const ShopContextProvider = ({ children }) => {
     setCartItems(cartData);
     console.log(cartData);
     
-    if (token) {
-      try {
-        await axios.post(
-          `${backendUrl}/api/v1/cart/add`,
-          { productId: itemId, quantity }, // Adjusted to correctly format the body
-          { headers: { token } }
-        );
-        if (response.data.status === "success") {
-          console.log("success");
-        }
-        else {
-          toast.error(response.data.message);
-        } 
-      } catch (error) {
-        console.error("Failed to add item to cart:", error);
-        toast.error(error.message);
-      }
+ if (token) {
+    try {
+      const response = await axios.post( // Store the response in a variable
+        `${backendUrl}/api/v1/cart/add`,
+        { productId: itemId, quantity }, 
+        { headers: { token } }
+      );
+      // Now check if the response is successful
+      if (response.data.status === "success") {
+        console.log("success");
+      } else {
+        toast.error(response.data.message);
+      } 
+    } catch (error) {
+      console.error("Failed to add item to cart:", error);
+      toast.error(error.message);
     }
-  };
+  }
+};
   
   const updateQuantity = async ({ itemId, quantity }) => {
     let cartData = structuredClone(cartItems);
