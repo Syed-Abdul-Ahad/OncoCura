@@ -64,24 +64,6 @@ const ShopContextProvider = ({ children }) => {
 //     let cartData = [...cartItems];
 //     const existingItem = cartData.find(item => item.product._id === itemId);
     
-<<<<<<< HEAD
- if (token) {
-    try {
-      const response = await axios.post( // Store the response in a variable
-        `${backendUrl}/api/v1/cart/add`,
-        { productId: itemId, quantity }, 
-        { headers: { token } }
-      );
-      // Now check if the response is successful
-      if (response.data.status === "success") {
-        console.log("success");
-      } else {
-        toast.error(response.data.message);
-      } 
-    } catch (error) {
-      console.error("Failed to add item to cart:", error);
-      toast.error(error.message);
-=======
 //     if (existingItem) {
 //         existingItem.quantity += quantity;
 //     } else {
@@ -239,10 +221,9 @@ const updateQuantity = async ({ itemId, quantity }) => {
         console.error("Failed to remove item from cart:", error);
         toast.error("Failed to remove item from cart.");
       }
->>>>>>> 631b9fe7f11c7f08ae7d369d28486628724ffac0
     }
   }
-};
+
   
 
   // const getCartCount = () => {
@@ -402,5 +383,4 @@ const getCartCount = () => {
     </ShopContext.Provider>
   );
 };
-
 export default ShopContextProvider;

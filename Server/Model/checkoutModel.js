@@ -4,6 +4,8 @@ env.config({ path: './../config.env' });
 const validator = require('validator');
 const mongoose = require('mongoose');
 
+// MY CODE
+
 const CheckoutSchema = new mongoose.Schema({
     user: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -65,5 +67,45 @@ const CheckoutSchema = new mongoose.Schema({
     collection: 'Checkout'
 });
 
+
+
+
+// new code
+
+// const CheckoutSchema = new mongoose.Schema({
+//     user: { 
+//         type: mongoose.Schema.Types.ObjectId, 
+//         ref: 'User', 
+//         required: true 
+//     },
+//     items: [{
+//         product: {
+//             type: mongoose.Schema.Types.ObjectId,
+//             ref: 'Product',
+//             required: true
+//         },
+//         quantity: {
+//             type: Number,
+//             required: true
+//         }
+//     }],
+//     firstName: { type: String, required: true },
+//     lastName: { type: String, required: true },
+//     email: { type: String, required: true, validate: [validator.isEmail, 'Please enter a valid email'] },
+//     street: { type: String, required: true },
+//     city: { type: String, required: true },
+//     state: { type: String, required: true },
+//     zipcode: { type: String, required: true },
+//     country: { type: String, required: true },
+//     phone: { type: String, required: true },
+//     status: { type: String, enum: ['Pending', 'Completed', 'Cancelled'], default: 'Pending' },
+//     placedAt: { type: Date, default: Date.now }
+// }, {
+//     collection: 'Checkout'
+// });
+
+
+
 const Checkout = mongoose.model('Checkout', CheckoutSchema);
 module.exports = Checkout;
+

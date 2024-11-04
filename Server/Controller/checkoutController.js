@@ -3,7 +3,7 @@ const Cart = require('./../Model/CartModel');
 const sendEmail = require('./../utils/email');
 const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
-
+// ye func chal rha hai properly
 
 // create checkout
 exports.createCheckout = asyncErrorHandler(async (req, res) => {
@@ -20,7 +20,7 @@ exports.createCheckout = asyncErrorHandler(async (req, res) => {
     // Create a new checkout record
     const checkout = await Checkout.create({
         user: userId,
-        cart: cart.items,
+        cart: cart._id,
         firstName,
         lastName,
         email,
@@ -57,49 +57,6 @@ exports.createCheckout = asyncErrorHandler(async (req, res) => {
         }
     });
 });
-
-
-
-
-
-
-
-
-// // Get a user's checkout details
-// exports.getCheckout = asyncErrorHandler(async (req, res) => {
-//     const userId = req.user.id;
-
-//     // Find the checkout details for the user and populate cart items and product details
-//     const checkout = await Checkout.findOne({ user: userId })
-//         .populate({
-//             path: 'cart',
-//             populate: {
-//                 path: 'items.product',
-//                 select: 'name price'
-//             }
-//         });
-
-//     if (!checkout) {
-//         return res.status(404).json({ message: 'No checkout found for this user' });
-//     }
-
-//     // Calculate subtotal and total
-//     const subtotal = checkout.cart.items.reduce((acc, item) => {
-//         return acc + item.product.price * item.quantity;
-//     }, 0);
-//     const shippingFee = 10;
-//     const total = subtotal + shippingFee;
-
-//     res.status(200).json({
-//         status: 'Success',
-//         data: {
-//             checkout,
-//             subtotal,
-//             shippingFee,
-//             total
-//         }
-//     });
-// });
 
 
 

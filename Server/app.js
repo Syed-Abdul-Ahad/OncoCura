@@ -6,7 +6,6 @@ const productRouter = require('./Routes/ProductRouter')
 const cartRouter = require('./Routes/cartRouter')
 const recordRouter = require('./Routes/recordRouter')
 const treatmentPlanRouter = require('./Routes/treatmentPlanRouter')
-const checkoutRouter = require('./Routes/checkoutRouter')
 const GlobalErrorHandler = require("./Controller/ErrorController")
 const customError = require('./utils/customError')
 const compression = require("compression");
