@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import { useGlobalContext } from "@/context/GlobalContext";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+
 // import Upload from './upload.png';
 
-function UploadReport({ onAnalyze }) {
-  const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState("");
+function UploadReport({ setModalOpen }) {
+  const [fileStatus, setFileStatus] = useState({
+    file: null,
+    fileName: "",
+    uploadStatus: "",
+  });
   const [errorMessage, setErrorMessage] = useState("");
-  const [uploadStatus, setUploadStatus] = useState("");
+  const token = localStorage.getItem("token");
+  const { setSummary, summary } = useGlobalContext();
+  const params = useParams();
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    console.log("File selected:", selectedFile);
     handleFile(selectedFile);
   };
 
   const handleDrop = (event) => {
     event.preventDefault();
     const selectedFile = event.dataTransfer.files[0];
-    console.log("File dropped:", selectedFile);
     handleFile(selectedFile);
   };
 
@@ -25,32 +32,49 @@ function UploadReport({ onAnalyze }) {
     if (selectedFile) {
       if (allowedFileTypes.includes(selectedFile.type)) {
         if (selectedFile.size <= 5 * 1024 * 1024) {
-          console.log("File accepted:", selectedFile);
-          setFile(selectedFile);
-          setFileName(selectedFile.name);
+          setFileStatus(() => ({
+            file: selectedFile,
+            fileName: selectedFile.name,
+            uploadStatus: "",
+          }));
+
           setErrorMessage("");
         } else {
           setErrorMessage("File size cannot exceed 5 MB.");
-          setFileName("");
-          setFile(null);
+          setFileStatus(() => ({
+            file: null,
+            fileName: "",
+            uploadStatus: "",
+          }));
         }
       } else {
         setErrorMessage(
           "Invalid file type. Please upload a PDF, JPEG, or PNG."
         );
-        setFileName("");
-        setFile(null);
+        setFileStatus(() => ({
+          file: null,
+          fileName: "",
+          uploadStatus: "",
+        }));
       }
     } else {
       setErrorMessage("No file selected.");
     }
   };
 
+  useEffect(() => {
+    if (summary) {
+      handleSummaryUpload();
+    }
+  }, [summary]);
+
   const handleFileUpload = async () => {
-    console.log("File received for upload:", file);
-    setUploadStatus("Uploading...");
+    setFileStatus((prev) => ({
+      ...prev,
+      uploadStatus: "Uploading file...",
+    }));
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", fileStatus.file);
 
     try {
       const response = await fetch(
@@ -61,28 +85,46 @@ function UploadReport({ onAnalyze }) {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to analyze document");
-      }
       const data = await response.json();
-      console.log("data : ", data);
-      const analysisResult = localStorage.setItem(
-        "analysisResult",
-        data.summary
-      );
-      onAnalyze(data.summary || "No summary available.");
-      setUploadStatus("File uploaded and analyzed successfully!");
-      setFile(null);
-      setFileName("");
+
+      setSummary(data.summary);
+
+      setFileStatus(() => ({
+        file: null,
+        fileName: "",
+        uploadStatus: "File uploaded and analyzed successfully!",
+      }));
+
+      setTimeout(() => setModalOpen(false), 4000);
     } catch (error) {
       console.error("Error uploading file:", error);
-      setUploadStatus("Error uploading file");
+      setFileStatus(() => ({
+        file: null,
+        fileName: "",
+        uploadStatus: "Error uploading file. Please try again.",
+      }));
+    }
+  };
+
+  const handleSummaryUpload = async () => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:3000/api/v1/record/${params?.id}`,
+        { summary },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (e) {
+      console.log("Error uploading summary: ", e);
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (file) {
+    if (fileStatus.file) {
       await handleFileUpload();
     } else {
       console.log("No file to upload");
@@ -126,7 +168,9 @@ function UploadReport({ onAnalyze }) {
               drop here
             </span>
           </label>
-          {fileName && <p className="text-center mt-2 text-sm">{fileName}</p>}
+          {fileStatus.fileName && (
+            <p className="text-center mt-2 text-sm">{fileStatus?.fileName}</p>
+          )}
           {errorMessage && (
             <p className="text-red-500 text-center font-bold text-sm">
               {errorMessage}
@@ -142,8 +186,8 @@ function UploadReport({ onAnalyze }) {
             Upload and Analyze
           </button>
         </form>
-        {uploadStatus && (
-          <p className="text-center mt-4 text-sm">{uploadStatus}</p>
+        {fileStatus?.uploadStatus && (
+          <p className="text-center mt-4 text-sm">{fileStatus.uploadStatus}</p>
         )}
       </div>
     </div>

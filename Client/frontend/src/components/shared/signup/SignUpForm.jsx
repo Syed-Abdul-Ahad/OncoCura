@@ -14,6 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import style from "../../../Styles/BtnColor.module.css";
 
 const formSchema = z
   .object({
@@ -25,7 +28,7 @@ const formSchema = z
       .max(20, { message: "Password must be at most 20 characters" })
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,20}$/, {
         message:
-          "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+          "Password must contain at least one uppercase letter and a number",
       }),
     confirmPassword: z
       .string()
@@ -38,6 +41,7 @@ const formSchema = z
 
 const SignUpForm = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const form = useForm({
@@ -50,6 +54,10 @@ const SignUpForm = () => {
     },
   });
 
+  useEffect(() => {
+    localStorage.setItem("login", "false");
+  }, []);
+
   const handleSignUp = async (values) => {
     return await axios.post("http://localhost:3000/api/v1/users/signup", {
       name: values.name,
@@ -61,14 +69,11 @@ const SignUpForm = () => {
 
   const handleError = (error) => {
     if (error.response && error.response.status === 400) {
-      const message = error.response.data?.message;
-      if (response.status !== 201) {
-        setErrorMessage("A user with this email already exists.");
-      } else {
-        setErrorMessage("Failed to sign up. Please try again.");
-      }
+      setErrorMessage("A user with this email already exists.");
+      toast.error("A user with this email already exists.");
     } else {
       setErrorMessage("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     }
     console.error(
       "Error during signup:",
@@ -77,15 +82,19 @@ const SignUpForm = () => {
   };
 
   const onSubmit = async (values) => {
+    setLoading(true);
     try {
       const response = await handleSignUp(values);
       if (!response.status === 201) {
         throw new Error("Failed to sign up");
       }
+      toast.success("Account created successfully! Redirecting to login...");
       localStorage.setItem("login", "false");
       navigate("/login");
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -194,13 +203,40 @@ const SignUpForm = () => {
             />
             <Button
               type="submit"
-              className="w-full mt-16 py-5  bg-[#004DFF] hover:bg-[#3155cd] text-white text-md rounded-md"
+              className={`w-full py-6 bg-[#004DFF] hover:bg-[#3155cd] text-white text-md rounded-md ${style.btnColor}`}
+              disabled={loading}
             >
-              Sign Up
+              {loading ? (
+                <svg
+                  className="animate-spin h-5 w-5 text-white mx-auto"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              ) : (
+                "Signup"
+              )}
             </Button>
           </form>
         </Form>
       </div>
+      {errorMessage && (
+        <div className="text-red-500 pt-3 text-center">{errorMessage}</div>
+      )}
     </div>
   );
 };

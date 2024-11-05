@@ -3,7 +3,7 @@ const customError = require('./../utils/customError');
 const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
 exports.createRecord = asyncErrorHandler(async (req, res, next) => {
-  const { recordName, analysisResult, kanbanRecords, summary } = req.body;
+  const { recordName, analysisResult, kanbanRecords } = req.body;
 
   const userId = req.user._id;
 
@@ -23,88 +23,86 @@ exports.createRecord = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-// Get all records for the authenticated user
 exports.getRecords = asyncErrorHandler(async (req, res) => {
-    const records = await Record.find({ userId: req.user._id }).populate(
-      "kanbanRecords"
-    );
+  const records = await Record.find({ userId: req.user._id }).populate(
+    "kanbanRecords"
+  );
 
-    res.status(200).json({
-        status: 'success',
-        data: { records }
-    });
+  res.status(200).json({
+    status: "success",
+    data: { records },
+  });
 });
 
-// Get a single record by ID
 exports.getSingleRecord = asyncErrorHandler(async (req, res, next) => {
-    const recordId = req.params.recordId;
+  const recordId = req.params.recordId;
 
-    const record = await Record.findById(recordId).populate('kanbanRecords');
+  const record = await Record.findById(recordId).populate("kanbanRecords");
 
-    // Handle case where record is not found
-    if (!record) {
-        return next(new customError('Record not found', 404));
-    }
+  // Handle case where record is not found
+  if (!record) {
+    return next(new customError("Record not found", 404));
+  }
 
-    // Check if the record belongs to the authenticated user
-    if (!record.userId.equals(req.user._id)) {
-        return next(new customError('You do not have permission to access this record', 403));
-    }
+  // Check if the record belongs to the authenticated user
+  if (!record.userId.equals(req.user._id)) {
+    return next(
+      new customError("You do not have permission to access this record", 403)
+    );
+  }
 
-    res.status(200).json({
-        status: 'success',
-        data: { record }
-    });
+  res.status(200).json({
+    status: "success",
+    data: { record },
+  });
 });
 
-// Optionally, you might want to implement methods for updating and deleting records as well.
-// For example, you could add the following methods to your recordController:
-
-// Update a record by ID
 exports.updateRecord = asyncErrorHandler(async (req, res, next) => {
-    const recordId = req.params.recordId;
+  const { kanbanRecords } = req.body;
 
-    // Ensure the record exists
-    const record = await Record.findById(recordId);
-    if (!record) {
-        return next(new customError('Record not found', 404));
-    }
+  const recordId = req.params.recordId;
 
-    // Check if the record belongs to the authenticated user
-    if (!record.userId.equals(req.user._id)) {
-        return next(new customError('You do not have permission to update this record', 403));
-    }
+  const record = await Record.findById(recordId);
 
-    // Update the record
-    const updatedRecord = await Record.findByIdAndUpdate(recordId, req.body, { new: true, runValidators: true });
+  if (!record) {
+    return next(new customError("Record not found", 404));
+  }
 
-    res.status(200).json({
-        status: 'success',
-        data: { record: updatedRecord }
-    });
+  if (!record.userId.equals(req.user._id)) {
+    return next(
+      new customError("You do not have permission to update this record", 403)
+    );
+  }
+
+  const updatedRecord = await Record.findByIdAndUpdate(recordId, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: { record: updatedRecord },
+  });
 });
 
-
-// Delete a record by ID
 exports.deleteRecord = asyncErrorHandler(async (req, res, next) => {
-    const recordId = req.params.recordId;
+  const recordId = req.params.recordId;
 
-    // Ensure the record exists
-    const record = await Record.findById(recordId);
-    if (!record) {
-        return next(new customError('Record not found', 404));
-    }
+  const record = await Record.findById(recordId);
+  if (!record) {
+    return next(new customError("Record not found", 404));
+  }
 
-    // Check if the record belongs to the authenticated user
-    if (!record.userId.equals(req.user._id)) {
-        return next(new customError('You do not have permission to delete this record', 403));
-    }
+  if (!record.userId.equals(req.user._id)) {
+    return next(
+      new customError("You do not have permission to delete this record", 403)
+    );
+  }
 
-    // Delete the record
-    await Record.findByIdAndDelete(recordId);
+  await Record.findByIdAndDelete(recordId);
 
-    res.status(204).json({
-        status: 'success',
-        data: null // No content to send back
-    });
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
 });

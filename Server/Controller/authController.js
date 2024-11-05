@@ -1,22 +1,21 @@
-const customError = require('../utils/customError')
-const User = require('./../Model/userModel')
-const asyncErrorHandler = require('./../utils/asyncErrorHandler')
-const jwt = require('jsonwebtoken')
-const util = require('util')
-const sendEmail = require('./../utils/email')
-const crypto = require('crypto')
-const env = require('dotenv')
-env.config({path:'./config.env'})
+const customError = require("../utils/customError");
+const User = require("./../Model/userModel");
+const asyncErrorHandler = require("./../utils/asyncErrorHandler");
+const jwt = require("jsonwebtoken");
+const util = require("util");
+const sendEmail = require("./../utils/email");
+const crypto = require("crypto");
+const env = require("dotenv");
+env.config({ path: "./config.env" });
+const bcrypt = require("bcryptjs");
 
 // function for token
 
-const signToken = (ID)=>{
-    return jwt.sign({id: ID},process.env.SECRET_STR,{
-        expiresIn : process.env.LOGIN_EXPIRES
-    })
-}
-
-
+const signToken = (ID) => {
+  return jwt.sign({ id: ID }, process.env.SECRET_STR, {
+    expiresIn: process.env.LOGIN_EXPIRES,
+  });
+};
 
 exports.signup = asyncErrorHandler(async (req, res, next) => {
   const { email, password, confirmPassword, name } = req.body;
@@ -224,7 +223,46 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
 });
 
 exports.changePassword = asyncErrorHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id).select("+password");
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    return next(
+      new customError(
+        "Please provide old password, new password, and confirm password",
+        400
+      )
+    );
+  }
+
+  if (newPassword !== confirmPassword) {
+    return next(
+      new customError("New password and confirm password do not match", 400)
+    );
+  }
+
+  const user = await User.findById(req.user._id).select("+password");
+
+  if (!user) {
+    return next(new customError("User not found", 404));
+  }
+
+  const isMatch = await user.comparePasswordInDB(oldPassword, user.password);
+
+  if (!isMatch) {
+    return next(new customError("Old password is incorrect", 400));
+  }
+
+  user.password = await bcrypt.hash(newPassword, 12);
+  user.passwordChangedAt = Date.now();
+  await user.save();
+
+  const token = signToken(user._id);
+
+  res.status(200).json({
+    status: "success",
+    message: "Password changed successfully",
+    token,
+  });
 });
 
 exports.getUserById = asyncErrorHandler(async (req, res, next) => {
@@ -242,9 +280,3 @@ exports.getUserById = asyncErrorHandler(async (req, res, next) => {
     user,
   });
 });
-
-
-
-
-
-

@@ -1,0 +1,8 @@
+.btnColor{
+    background-color: rgb(25, 25, 255);
+    color: white;
+}
+
+.btnColor:hover{
+    background-color:  rgb(0, 0, 184);
+}

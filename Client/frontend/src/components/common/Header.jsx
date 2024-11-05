@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { assets } from "../../../public/assets";
 import { Link } from "react-router-dom";
 import ShopContext from "../../context/ShopContext";
+import LogOut from "../shared/logout/Logout";
 
 const Header = () => {
   const isLoggedIn = localStorage.getItem("login");
@@ -31,6 +32,8 @@ const Header = () => {
               alt="order_icon"
             />
           </Link>
+
+          <LogOut />
         </div>
       ) : (
         <div className="w-72 h-full flex justify-center items-center gap-x-4">

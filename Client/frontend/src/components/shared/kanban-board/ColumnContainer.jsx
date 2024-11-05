@@ -1,10 +1,10 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import TaskCard from "./TaskCard";
-import { IconPlus, IconTrash } from "@tabler/icons-react";
 
 function ColumnContainer({
+  openDialog,
   column,
   deleteColumn,
   updateColumn,
@@ -13,7 +13,8 @@ function ColumnContainer({
   deleteTask,
   updateTask,
 }) {
-  const [editMode, setEditMode] = useState(false);
+  // Set initial editMode based on whether the column title is empty
+  const [editMode, setEditMode] = useState(column.title === "");
 
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id);
@@ -40,13 +41,6 @@ function ColumnContainer({
     transform: CSS.Transform.toString(transform),
   };
 
-  // // Positioning the column
-  // const positionStyle = {
-  //   position: 'absolute',
-  //   top: '42px', // 32 pixels from the top
-  //   left: '32px', // 32 pixels from the left
-  // };
-
   if (isDragging) {
     return (
       <div
@@ -61,14 +55,13 @@ function ColumnContainer({
     <div
       ref={setNodeRef}
       style={style}
-      // complete columns
       className="rounded-2xl border flex h-[420px] max-h-[500px] w-[280px] flex-col bg-white shadow-lg relative top-32 left-40"
     >
       <div
         {...attributes}
         {...listeners}
         onClick={() => {
-          setEditMode(true);
+          if (!editMode) setEditMode(true); // Enable editMode on click if it's not already enabled
         }}
         className="text-md m-2 flex h-[40px] mt-3 cursor-grab items-center justify-between rounded-xl bg-[#F0F0F0] p-3 font-bold font-poppins text-black "
       >
@@ -80,27 +73,27 @@ function ColumnContainer({
               value={column.title}
               onChange={(e) => updateColumn(column.id, e.target.value)}
               autoFocus
+              placeholder="Enter column title"
               onBlur={() => {
                 setEditMode(false);
               }}
               onKeyDown={(e) => {
-                if (e.key !== "Enter") return;
-                setEditMode(false);
+                if (e.key === "Enter") setEditMode(false);
               }}
             />
           )}
         </div>
         <button
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation(); // Prevents edit mode toggle on delete
             deleteColumn(column.id);
           }}
           className="rounded stroke-gray-500 px-1 py-2 hover:bg-columnBackgroundColor hover:stroke-white"
         >
-          <IconTrash className="text-[#004DFF]" />
+          {/* Add any icon for delete here */}
         </button>
       </div>
-      {/* add task portion */}
-      <div className="flex flex-grow flex-col gap-4 overflow-y-auto overflow-x-hidden p-2 bg-white  shadow-lg">
+      <div className="flex flex-grow flex-col gap-4 overflow-y-auto overflow-x-hidden p-2 bg-white shadow-lg">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
             <TaskCard
@@ -112,14 +105,12 @@ function ColumnContainer({
           ))}
         </SortableContext>
       </div>
-      {/* create task with icon */}
       <button
-        className="flex items-center gap-2 text-black rounded-md bg-white   shadow-lg p-4 hover:text-[#004DFF] active:bg-[#F0F0F0] h-[40px] text-xs font-bold font-poppins relative"
+        className="flex items-center gap-2 text-black rounded-md bg-white shadow-lg p-4 hover:text-[#004DFF] active:bg-[#F0F0F0] h-[40px] text-xs font-bold font-poppins relative"
         onClick={() => {
-          createTask(column.id);
+          openDialog("newTask", column.id);
         }}
       >
-        <IconPlus className="h-[20px] w-[20px]" />
         Add task
       </button>
     </div>

@@ -1,7 +1,7 @@
 import { GeneratePlan } from "@/components/shared/kanban-board/generatePlanWithAI";
 import React from "react";
 
-const kanbanBoard = () => {
+const kanbanBoardPage = () => {
   return (
     <div>
       <GeneratePlan />
@@ -9,4 +9,4 @@ const kanbanBoard = () => {
   );
 };
 
-export default kanbanBoard;
+export default kanbanBoardPage;
