@@ -23,13 +23,16 @@ import Cart from "./Pages/e-commerce/Cart";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Error from "./components/common/Error";
 import AuthRoute from "./components/common/AuthRoute";
+import PlaceOrder from "./Pages/e-commerce/PlaceOrder";
+import Orders from "./Pages/e-commerce/Orders";
+import { routes } from "./utils/constants";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route element={<RootLayout />}>
         <Route
-          path="/"
+          path={routes.home}
           element={
             <AuthRoute>
               <Home />
@@ -37,7 +40,7 @@ const App = () => {
           }
         />
         <Route
-          path="/login"
+          path={routes.login}
           element={
             <AuthRoute>
               <LoginPage />
@@ -45,7 +48,7 @@ const App = () => {
           }
         />
         <Route
-          path="/signup"
+          path={routes.signup}
           element={
             <AuthRoute>
               <SignUp />
@@ -53,15 +56,17 @@ const App = () => {
           }
         />
         <Route element={<ProtectedRoute />}>
-          <Route path="/user-profile/:id" element={<UserProfilePage />} />
-          <Route path="/records" element={<Records />} />
-          <Route path="records/:id" element={<KanbanBoardPage />} />
-          <Route path="/kanban-board/:id" element={<KanbanBoard />} />
-          <Route path="/collection" element={<Collection />} />
-          <Route path="/product/:id" element={<Product />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route path={routes.userProfile} element={<UserProfilePage />} />
+          <Route path={routes.records} element={<Records />} />
+          <Route path={routes.kanbanBoard} element={<KanbanBoardPage />} />
+          <Route path={routes.kanbanBoardPage} element={<KanbanBoard />} />
+          <Route path={routes.collection} element={<Collection />} />
+          <Route path={routes.product} element={<Product />} />
+          <Route path={routes.cart} element={<Cart />} />
+          <Route path={routes.placeOrder} element={<PlaceOrder />} />
+          <Route path={routes.orders} element={<Orders />} />
         </Route>
-        <Route path="*" element={<Error />} />
+        <Route path={routes.error} element={<Error />} />
       </Route>
     )
   );

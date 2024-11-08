@@ -1,12 +1,13 @@
 import { useContext } from "react";
 import { assets } from "../../../public/assets";
 import { Link } from "react-router-dom";
-import ShopContext from "../../context/ShopContext";
+import { ShopContext } from "../../context/ShopContext";
 import LogOut from "../shared/logout/Logout";
 
 const Header = () => {
   const isLoggedIn = localStorage.getItem("login");
   const { getCartCount } = useContext(ShopContext);
+  const cartCount = getCartCount();
 
   return (
     <div className="w-full h-16 bg-white flex justify-between items-center px-12 shadow-md relative top-0 z-30">
@@ -21,18 +22,17 @@ const Header = () => {
               src={assets.cart_icon}
               alt="cart_icon"
             />
-            <p className="absolute right-[-2px] bottom-[-2px] w-4 text-center leading-4 bg-[#004DFF] text-white aspect-square rounded-full text-[8px] ">
+            <p className="absolute right-[-2px] bottom-[-2px] w-4 text-center leading-4 bg-[#004DFF] text-white aspect-square rounded-full text-[10px] ">
               {getCartCount()}
             </p>
           </Link>
-          <Link to="#" className="relative">
+          <Link to="/orders" className="relative">
             <img
               className="w-[22px] min-w-[22px]"
               src={assets.order_icon}
               alt="order_icon"
             />
           </Link>
-
           <LogOut />
         </div>
       ) : (

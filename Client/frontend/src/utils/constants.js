@@ -1,0 +1,15 @@
+export const routes = {
+  home: "/",
+  login: "/login",
+  signup: "/signup",
+  userProfile: "/user-profile/:id",
+  records: "/records",
+  kanbanBoard: "/records/:id",
+  kanbanBoardPage: "/kanban-board/:id",
+  collection: "/collection",
+  product: "/product/:id",
+  cart: "/cart",
+  placeOrder: "/placeorder",
+  orders: "/orders",
+  error: "*",
+};

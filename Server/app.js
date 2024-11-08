@@ -11,6 +11,7 @@ const customError = require('./utils/customError')
 const compression = require("compression");
 const analysisRoutes = require("./Routes/analysisRouter");
 const kanbanRoutes = require("./Routes/kanbanRouter");
+const checkoutRouter = require('./Routes/checkoutRouter')
 
 const app = express();
 app.use(compression());
@@ -36,6 +37,7 @@ app.use("/api/v1/users", authRouter);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/cart", cartRouter);
+app.use("/api/v1/checkout", checkoutRouter);
 app.use("/api/v1/record", recordRouter);
 app.use("/api/v1/plan", treatmentPlanRouter);
 app.use("/api/v1/analyze", analysisRoutes);
