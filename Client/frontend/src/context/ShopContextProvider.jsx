@@ -202,6 +202,7 @@ const ShopContextProvider = ({ children }) => {
       (item) => item?.product?._id !== itemId
     );
     setCartItems(updatedCart);
+    console.log("updated cart", updatedCart)
 
     if (token) {
       try {
@@ -257,13 +258,15 @@ const ShopContextProvider = ({ children }) => {
   // };
 
   const getCartAmount = () => {
-    return (cartItems || []).reduce((total, item) => {
-      // Ensure item.product and item.quantity are defined
-      if (item.product && item.quantity) {
-        return total + item.product.price * item.quantity;
-      }
-      return total; // Return total unchanged if item is invalid
-    }, 0);
+    if(Array.isArray(cartItems)){
+      return cartItems.reduce((total, item) => {
+        // Ensure item.product and item.quantity are defined
+        if (item.product && item.quantity) {
+          return total + item.product.price * item.quantity;
+        }
+        return total; // Return total unchanged if item is invalid
+      }, 0);
+    }
   };
 
   // const getCartCount = () => {
@@ -308,7 +311,9 @@ const ShopContextProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       // console.log("Cart response data:", response.data); // Inspect response structure
-
+      if(response.data.data.cart.isDeleted){
+        return
+      }
       if (response.data.status === "Success") {
         setCartItems(response.data.data.cart.items); // Make sure `items` is correct
         // console.log("Cart items set:", response.data.data.cart.items);

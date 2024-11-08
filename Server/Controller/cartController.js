@@ -40,19 +40,18 @@ exports.removeFromCart = asyncErrorHandler(async (req, res) => {
   // Find the cart based on user ID
   let cart = await Cart.findOne({ user: userId });
 
-  console.log("cart : ", cart);
-
+  console.log(productId)
   // If the cart is not found, return a 404 status
   if (!cart) {
     return res.status(404).json({ message: "Cart not found" });
   }
+  console.log("cart", cart)
 
   // Remove the item from the cart
   const updatedItems = cart.items.filter(
     (item) => item?._id.toString() !== productId
   );
-
-  console.log("updatedItems : ", updatedItems);
+  console.log("updatedItems",updatedItems)
 
   // If no items were removed, return an error message
   if (updatedItems.length === cart.items.length) {

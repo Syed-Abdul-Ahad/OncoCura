@@ -14,6 +14,10 @@ const cartSchema = new mongoose.Schema({
     },
     quantity: { type: Number, default: 1 }
   }]
+  , isDeleted:{
+    type:Boolean,
+    default:false
+  }
 },{
     collection:'Cart'
 });

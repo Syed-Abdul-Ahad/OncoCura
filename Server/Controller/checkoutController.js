@@ -11,7 +11,7 @@ exports.createCheckout = asyncErrorHandler(async (req, res) => {
     const { firstName, lastName, email, street, city, state, zipcode, country, phone } = req.body;
 
     // Find the user's cart
-    const cart = await Cart.findOne({ user: userId }).populate('items.product');
+    let cart = await Cart.findOne({ user: userId }).populate('items.product');
     console.log(userId)
     if (!cart || cart.items.length === 0) {
         return res.status(400).json({ message: 'Your cart is empty' });
@@ -34,6 +34,7 @@ exports.createCheckout = asyncErrorHandler(async (req, res) => {
         placedAt: Date.now()
     });
 
+    cart = await Cart.findByIdAndUpdate(cart._id,{isDeleted: true})
 
     // cart.items = [];
     await cart.save();
