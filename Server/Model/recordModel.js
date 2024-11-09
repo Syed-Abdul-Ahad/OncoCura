@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema({
   id: {
@@ -50,11 +50,15 @@ const recordSchema = new mongoose.Schema(
     },
     summary: {
       type: String,
+      required: false,
     },
-    kanbanRecords: kanbanRecordSchema,
+    kanbanRecords: {
+      type: [kanbanRecordSchema],
+      required: false,
+    },
   },
   { timestamps: true }
 );
 
-const Record = mongoose.model('Record', recordSchema);
+const Record = mongoose.model("Record", recordSchema);
 module.exports = Record;

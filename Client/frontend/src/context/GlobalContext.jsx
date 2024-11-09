@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useMemo } from "react";
 import axios from "axios";
 
 const GlobalContext = createContext();
@@ -36,21 +36,22 @@ export const GlobalProvider = ({ children }) => {
     localStorage.removeItem("token");
   };
 
+  const value = useMemo(
+    () => ({
+      isLoggedIn,
+      login,
+      logout,
+      getAllRecords,
+      records,
+      summary,
+      setSummary,
+      token,
+    }),
+    [isLoggedIn, records, summary, token]
+  );
+
   return (
-    <GlobalContext.Provider
-      value={{
-        isLoggedIn,
-        login,
-        logout,
-        getAllRecords,
-        records,
-        summary,
-        setSummary,
-        token,
-      }}
-    >
-      {children}
-    </GlobalContext.Provider>
+    <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>
   );
 };
 
