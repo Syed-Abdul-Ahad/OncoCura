@@ -3,7 +3,7 @@ const customError = require('./../utils/customError');
 const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
 exports.createRecord = asyncErrorHandler(async (req, res, next) => {
-  const { recordName, analysisResult, kanbanRecords } = req.body;
+  const { recordName, analysisResult, kanbanRecords, summary } = req.body;
 
   const userId = req.user._id;
 
