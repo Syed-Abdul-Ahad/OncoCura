@@ -222,21 +222,56 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
+// exports.changePassword = asyncErrorHandler(async (req, res, next) => {
+//   const { oldPassword, newPassword, confirmPassword } = req.body;
+
+//   if (!oldPassword || !newPassword || !confirmPassword) {
+//     return next(
+//       new customError(
+//         "Please provide old password, new password, and confirm password",
+//         400
+//       )
+//     );
+//   }
+
+//   if (newPassword !== confirmPassword) {
+//     return next(
+//       new customError("New password and confirm password do not match", 400)
+//     );
+//   }
+
+//   const user = await User.findById(req.user._id).select("+password");
+
+//   if (!user) {
+//     return next(new customError("User not found", 404));
+//   }
+
+//   const isMatch = await user.comparePasswordInDB(oldPassword, user.password);
+
+//   if (!isMatch) {
+//     return next(new customError("Old password is incorrect", 400));
+//   }
+
+//   user.password = await bcrypt.hash(newPassword, 12);
+//   user.passwordChangedAt = Date.now();
+//   await user.save();
+
+//   const token = signToken(user._id);
+
+//   res.status(200).json({
+//     status: "success",
+//     message: "Password changed successfully",
+//     token,
+//   });
+// });
+
+
 exports.changePassword = asyncErrorHandler(async (req, res, next) => {
-  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const { oldPassword, newPassword } = req.body;
 
-  if (!oldPassword || !newPassword || !confirmPassword) {
+  if (!oldPassword || !newPassword) {
     return next(
-      new customError(
-        "Please provide old password, new password, and confirm password",
-        400
-      )
-    );
-  }
-
-  if (newPassword !== confirmPassword) {
-    return next(
-      new customError("New password and confirm password do not match", 400)
+      new customError("Please provide both old and new passwords", 400)
     );
   }
 
@@ -252,7 +287,8 @@ exports.changePassword = asyncErrorHandler(async (req, res, next) => {
     return next(new customError("Old password is incorrect", 400));
   }
 
-  user.password = await bcrypt.hash(newPassword, 12);
+  // Update the user's password
+  user.password = newPassword;
   user.passwordChangedAt = Date.now();
   await user.save();
 
@@ -264,6 +300,7 @@ exports.changePassword = asyncErrorHandler(async (req, res, next) => {
     token,
   });
 });
+
 
 exports.getUserById = asyncErrorHandler(async (req, res, next) => {
   const user = await User.findById({ _id: req.params.id });

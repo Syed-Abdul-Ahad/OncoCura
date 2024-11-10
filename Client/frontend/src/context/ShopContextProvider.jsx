@@ -220,7 +220,7 @@ const ShopContextProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Failed to remove item from cart:", error);
-        toast.error("Failed to remove item from cart.");
+        // toast.error("Failed to remove item from cart.");
       }
     }
   };
@@ -318,14 +318,14 @@ const ShopContextProvider = ({ children }) => {
         setCartItems(response.data.data.cart.items); // Make sure `items` is correct
         // console.log("Cart items set:", response.data.data.cart.items);
       } else {
-        toast.error(response.data.message || "Failed to fetch cart items");
+        // toast.error(response.data.message || "Failed to fetch cart items");
+        console.log(response.data.message)
       }
     } catch (error) {
       console.error(
         "Error fetching user cart:",
         error.toJSON ? error.toJSON() : error
       );
-      toast.error("Failed to load cart. Please try again.");
     }
   };
 

@@ -2,7 +2,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { processFile } = require("../utils/fileProcessing");
 
 // Initialize Google Generative AI with API key
-const apiKey = process.env.VITE_GEMINI_API_KEY;
+const apiKey = 'AIzaSyD6gKCWI96vIPB5rDXYwd6aoekHNBMrEeE';
 const genAI = new GoogleGenerativeAI(apiKey);
 
 exports.analyzeFile = async (req, res) => {
