@@ -240,12 +240,12 @@ export default function KanbanBoard({ state }) {
         <div>
           <button
             onClick={() => openDialog("newColumn")}
-            className="flex mb-10 h-[60px] w-[200px] min-w-[200px] cursor-pointer gap-2 rounded-lg border-2 border-columnBackgroundColor bg-mainBackgroundColor p-4 ring-[#004DFF] hover:ring-2 relative top-32 ml-[70rem] text-[#004DFF]"
+            className="flex mb-10 h-[60px] w-[200px] min-w-[200px] cursor-pointer gap-2 rounded-lg border-2 border-columnBackgroundColor bg-mainBackgroundColor p-4 ring-[#004DFF] hover:ring-2 relative top-32 ml-[65rem] text-[#004DFF]"
           >
             Add Column
           </button>
         </div>
-        <div className="flex gap-4 flex-wrap w-[90vw]">
+        <div className="flex gap-4 flex-wrap w-[85vw]">
           <div className="flex gap-4 flex-wrap ">
             <SortableContext items={columnsId}>
               {columns &&

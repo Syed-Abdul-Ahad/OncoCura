@@ -9,6 +9,7 @@ import { ProfileLoader } from "../../common/Loader";
 const UserProfile = () => {
   const params = useParams();
   const [user, setUser] = useState({});
+  const [info, setInfo] = useState({});
   const [passwords, setPasswords] = useState({
     oldPassword: "",
     newPassword: "",
@@ -71,6 +72,34 @@ const UserProfile = () => {
     }));
   };
 
+
+  const handleSaveChanges = async () => {
+    try {
+      const updatedData = {
+        name: info.name,
+        email: info.email,
+      };
+
+      const response = await axios.patch(
+        `http://localhost:3000/api/v1/users/update-user`,
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+
+      if (response.status === 'success') {
+        alert('Profile updated successfully');
+      }
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      alert('Failed to update profile');
+    }
+  };
+
+
   return (
     <div className="flex flex-col gap-2 w-full h-full  justify-center items-center py-10">
       <div className="relative w-[100%] max-w-[1267px] h-auto p-6 bg-white rounded-[25px] shadow-[5px_5px_40px_-12px_rgba(0,0,0,0.08)]">
@@ -98,23 +127,31 @@ const UserProfile = () => {
             <h1 className="text-xl font-semibold mb-2">Personal Details</h1>
             <div className="flex flex-row gap-56 ">
               <div className="flex flex-col w-2/6 ">
-                <InputWithLabel label="Name" placeholder="Johnny Johnny" />
+                <InputWithLabel label="Name" placeholder="Johnny Johnny"
+                  value={info.name || ''}
+                  onChange={(e) => setInfo({ ...user, name: e.target.value })}
+                />
               </div>
               <div className="flex flex-col w-2/6">
                 <InputWithLabel
                   label="Email"
                   placeholder="example123@gmail.com "
+                  value={info.email || ''}
+                  onChange={(e) => setInfo({ ...user, email: e.target.value })}
                 />
               </div>
             </div>
           </div>
 
           <div className="flex flex-row flex-2 gap-[50rem] w-3/4 ">
-            <Button className="bg-transparent text-black px-4 py-6 rounded-lg border border-black">
+            <Button className="bg-transparent text-black px-4 py-6 rounded-lg border border-black"
+              onClick= {()=> setInfo({})}
+            >
               Discard Changes
             </Button>
             <Button
               className={`${style.btnColor}  text-white px-4 py-6 rounded-lg`}
+              onClick={handleSaveChanges}
             >
               Save Changes
             </Button>

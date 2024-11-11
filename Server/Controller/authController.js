@@ -317,3 +317,19 @@ exports.getUserById = asyncErrorHandler(async (req, res, next) => {
     user,
   });
 });
+
+
+
+exports.updateUser = asyncErrorHandler(async (req, res) => {
+  const { name, email } = req.body;
+  const user = req.user._id
+
+  const updatedUser = await User.findByIdAndUpdate(user,{name, email});
+
+  res.status(200).json({
+    status : "success",
+    data:{
+      updatedUser
+    }
+  })
+})
